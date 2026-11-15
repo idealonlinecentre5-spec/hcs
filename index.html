@@ -1,845 +1,213 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Health Care Management System</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f2f5fa;color:#182943}
-button,input,select{font:inherit}
-button{cursor:pointer}
-.hidden{display:none!important}
-:root{--navy:#102b50;--blue:#1769d2;--line:#e4eaf2}
-#login{min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(135deg,#102b50,#1766bd)}
-.login-card{background:white;width:min(420px,100%);padding:30px;border-radius:18px;box-shadow:0 20px 60px #071c3b55}
-.logo{font-size:27px;font-weight:bold;color:var(--blue)}
-.field{margin:15px 0}
-.field label{display:block;font-size:13px;font-weight:bold;margin-bottom:7px}
-.field input,.field select{width:100%;padding:12px;border:1px solid #d9e1ec;border-radius:8px}
-.primary{background:var(--blue);color:white;border:0;border-radius:8px;padding:11px 15px;font-weight:bold}
-.secondary{background:#e9eff8;color:#18395f;border:0;border-radius:8px;padding:10px 13px}
-.danger{background:#fee8e8;color:#b42318;border:0;border-radius:7px;padding:8px 10px}
-.success{background:#e2f7eb;color:#087443;border:0;border-radius:7px;padding:8px 10px}
-.wide{width:100%}
-#error{color:#c62828;font-size:13px;min-height:20px}
-.sidebar{position:fixed;inset:0 auto 0 0;width:245px;background:var(--navy);color:white;padding:22px 14px;overflow:auto;z-index:5}
-.brand{font-size:23px;font-weight:bold;padding:5px 10px 25px}
-.brand small{display:block;font-size:12px;font-weight:normal;color:#bdcde0;margin-top:5px}
-.nav-label{font-size:11px;color:#9db1ca;padding:15px 10px 7px}
-.nav button{display:block;width:100%;border:0;background:transparent;color:#e4edf8;text-align:left;padding:12px;border-radius:9px;margin:3px 0}
-.nav button.active,.nav button:hover{background:#1765ca}
-.main{margin-left:245px;min-width:0}
-.top{height:72px;background:white;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 25px;position:sticky;top:0;z-index:3}
-.top h1{font-size:19px;margin:0}
-.user{font-size:13px;text-align:right}
-.content{padding:24px;max-width:1450px;margin:auto}
-.welcome{background:linear-gradient(110deg,#1059b7,#1686d9);color:white;border-radius:15px;padding:23px;margin-bottom:18px}
-.welcome h2{margin:0 0 7px}
-.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
-.card,.panel{background:white;border:1px solid var(--line);border-radius:13px;padding:18px;box-shadow:0 4px 16px #18345a08}
-.card .label{color:#718096;font-size:13px}
-.card strong{display:block;font-size:29px;margin-top:9px}
-.symbol{float:right;font-size:24px}
-.grid{display:grid;grid-template-columns:1.3fr 1fr;gap:15px;margin-top:17px}
-.panel h3{margin:0 0 15px;font-size:16px}
-.muted{color:#718096;font-size:13px}
-.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:15px}
-.toolbar h3{margin-right:auto}
-.table-wrap{overflow:auto}
-table{width:100%;border-collapse:collapse;min-width:650px}
-th,td{text-align:left;padding:11px 9px;border-bottom:1px solid var(--line);font-size:13px}
-th{color:#718096;background:#f8faff}
-td button{margin:2px}
-.status{display:inline-block;padding:5px 9px;border-radius:20px;font-size:11px;background:#edf1f6;color:#445}
-.status.active{background:#e2f7eb;color:#087443}
-.status.pending{background:#fff3d8;color:#936000}
-.status.suspended{background:#fee8e8;color:#b42318}
-.empty{text-align:center;padding:25px;color:#718096;font-size:13px}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 15px}
-.section-title{font-weight:bold;color:#1769d2;border-bottom:1px solid var(--line);padding-bottom:8px;margin-top:20px}
-.note{background:#eef5ff;padding:12px;border-radius:8px;font-size:13px;color:#284b75}
-.menu-btn{display:none;border:0;background:#edf3fb;padding:9px;border-radius:8px}
-#toast{position:fixed;bottom:20px;right:20px;background:#142e52;color:white;padding:12px 16px;border-radius:9px;display:none;z-index:20;max-width:90%}
-@media(max-width:950px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.grid{grid-template-columns:1fr}}
-@media(max-width:700px){
-.sidebar{transform:translateX(-100%);transition:.2s}
-.sidebar.open{transform:translateX(0)}
-.main{margin-left:0}
-.menu-btn{display:block}
-.top{padding:0 13px}
-.content{padding:13px}
-.cards{gap:9px}
-.card{padding:13px}
-.card strong{font-size:24px}
-.top h1{font-size:15px}
-.form-grid{grid-template-columns:1fr}
-}
+:root{--navy:#10243a;--blue:#1769aa;--teal:#0c9488;--bg:#f3f6fa;--line:#dce4ec;--ink:#182536;--muted:#687789;--red:#c0392b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,"Noto Sans Bengali",sans-serif;color:var(--ink)}
+button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;border-radius:8px;padding:10px 14px;background:var(--blue);color:#fff;font-weight:600}
+button.secondary{background:#e8eef5;color:#24384d}button.danger{background:#b93838}button.teal{background:var(--teal)}
+input,select,textarea{width:100%;padding:10px;border:1px solid #cbd6e1;border-radius:8px;background:white;color:#142234}
+label{font-size:13px;font-weight:650;color:#425267;display:block;margin:10px 0 5px}
+.hidden{display:none!important}.muted{color:var(--muted)}.small{font-size:12px}
+#login{min-height:100vh;display:grid;place-items:center;padding:18px;background:linear-gradient(135deg,#10243a,#1769aa)}
+.loginbox{background:white;width:min(420px,100%);padding:28px;border-radius:18px;box-shadow:0 20px 60px #0003}
+.brand{font-weight:800;font-size:22px;color:var(--navy)}.loginbox h2{margin:8px 0 4px}
+#app{min-height:100vh}.top{height:60px;background:var(--navy);color:white;display:flex;align-items:center;justify-content:space-between;padding:0 18px;position:sticky;top:0;z-index:4}
+.top strong{font-size:17px}.layout{display:grid;grid-template-columns:245px 1fr;min-height:calc(100vh - 60px)}
+aside{background:#fff;border-right:1px solid var(--line);padding:14px;overflow:auto}
+.navgroup{font-size:11px;color:#8190a0;font-weight:800;margin:16px 8px 6px;text-transform:uppercase}
+.nav{display:block;width:100%;text-align:left;background:transparent;color:#34465a;padding:10px;border-radius:8px;font-weight:600;margin:2px 0}
+.nav:hover,.nav.active{background:#e9f3fc;color:#075b9c}
+main{padding:22px;min-width:0}.head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+h1{font-size:23px;margin:0}h2{font-size:18px;margin:0 0 12px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:16px 0}
+.card,.panel{background:white;border:1px solid var(--line);border-radius:12px;padding:16px}
+.metric{font-size:27px;font-weight:800;color:var(--blue);margin-top:6px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.toolbar input{max-width:260px}
+.tablewrap{overflow:auto;background:white;border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;min-width:700px}th,td{padding:11px 12px;border-bottom:1px solid #e9eef3;text-align:left;font-size:13px;white-space:nowrap}
+th{background:#f6f9fc;color:#526275;position:sticky;top:0}td.actions{display:flex;gap:6px}
+td button{padding:6px 9px;font-size:12px}.empty{text-align:center;padding:28px;color:#718094}
+#modal{position:fixed;inset:0;background:#10243a88;display:grid;place-items:center;padding:14px;z-index:10}
+.modalbox{background:white;border-radius:14px;width:min(680px,100%);max-height:92vh;overflow:auto;padding:20px}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}.formactions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#172b40;color:white;padding:11px 18px;border-radius:9px;z-index:20;display:none;max-width:90%}
+.notice{padding:12px;background:#fff8df;border:1px solid #f0dfa5;border-radius:9px;color:#735d16;margin:12px 0;font-size:13px}
+@media(max-width:760px){.layout{grid-template-columns:1fr}aside{display:flex;gap:5px;overflow-x:auto;border-right:0;border-bottom:1px solid var(--line);padding:8px}.navgroup{display:none}.nav{white-space:nowrap;width:auto;flex:0 0 auto}.top{padding:0 12px}main{padding:14px}.formgrid{grid-template-columns:1fr}h1{font-size:20px}}
 </style>
 </head>
 <body>
-
 <section id="login">
- <div class="login-card">
-  <div class="logo">✚ HCMS</div>
-  <h2>Admin Login</h2>
-  <p class="muted">Super Admin অথবা Hospital Admin</p>
+ <div class="loginbox">
+  <div class="brand">✚ HEALTH CARE</div><h2>Management System</h2><p class="muted">নিরাপদ হাসপাতাল ব্যবস্থাপনা</p>
   <form id="loginForm">
-   <div class="field">
-    <label>Email Address</label>
-    <input id="email" type="email" required autocomplete="username" placeholder="আপনার Email">
-   </div>
-   <div class="field">
-    <label>Password</label>
-    <input id="password" type="password" required autocomplete="current-password" placeholder="আপনার Password">
-   </div>
-   <div id="error"></div>
-   <button class="primary wide" id="loginBtn">Login</button>
-  </form>
-  <p class="muted">আপনার পাসওয়ার্ড কারও সঙ্গে শেয়ার করবেন না।</p>
+   <label>ইমেইল</label><input id="email" type="email" required autocomplete="username" placeholder="আপনার ইমেইল">
+   <label>পাসওয়ার্ড</label><input id="password" type="password" required autocomplete="current-password" placeholder="পাসওয়ার্ড">
+   <button style="width:100%;margin-top:18px" type="submit">লগইন করুন</button>
+  </form><p id="loginMsg" class="small muted"></p>
  </div>
 </section>
-
-<div id="app" class="hidden">
- <aside class="sidebar" id="sidebar">
-  <div class="brand">✚ HCMS<small>Health Care Management System</small></div>
-
-  <div id="superAdminNav">
-   <div class="nav-label">SUPER ADMIN MENU</div>
-   <nav class="nav">
-    <button data-view="dashboard" class="active">▦ Dashboard</button>
-    <button data-view="hospitals">🏥 Hospital Management</button>
-    <button data-view="approvals">✓ Hospital Approval</button>
-    <button data-view="doctors">👨‍⚕️ Doctors</button>
-    <button data-view="patients">🧑 Patients</button>
-    <button data-view="appointments">📅 Appointments</button>
-    <button data-view="users">♙ User Management</button>
-   </nav>
-   <div class="nav-label">ACCOUNT</div>
-   <nav class="nav"><button id="logoutBtn">⇥ Logout</button></nav>
-  </div>
-
-  <div id="hospitalAdminNav" class="hidden">
-   <div class="nav-label">HOSPITAL MENU</div>
-   <nav class="nav">
-    <button data-hospital-view="dashboard" class="active">▦ Dashboard</button>
-    <button data-hospital-view="doctors">👨‍⚕️ Doctors</button>
-    <button data-hospital-view="patients">🧑 Patients</button>
-    <button data-hospital-view="appointments">📅 Appointments</button>
-    <button data-hospital-view="members">♙ Hospital Users</button>
-   </nav>
-   <div class="nav-label">ACCOUNT</div>
-   <nav class="nav"><button id="hospitalLogoutBtn">⇥ Logout</button></nav>
-  </div>
- </aside>
-
- <div class="main">
-  <header class="top">
-   <div style="display:flex;align-items:center;gap:12px">
-    <button class="menu-btn" id="menuBtn">☰</button>
-    <h1 id="heading">Dashboard</h1>
-   </div>
-   <div class="user"><b id="adminName">Admin</b><br><span id="adminEmail" class="muted"></span></div>
-  </header>
-
-  <main class="content">
-
-   <section id="dashboardView">
-    <div class="welcome">
-     <h2>Welcome to HCMS</h2>
-     <div>Multi-Hospital Management System - Super Admin Dashboard</div>
-    </div>
-    <div class="cards">
-     <div class="card"><span class="symbol">🏥</span><div class="label">Total Hospitals</div><strong id="hospitalCount">—</strong></div>
-     <div class="card"><span class="symbol">👨‍⚕️</span><div class="label">Total Doctors</div><strong id="doctorCount">—</strong></div>
-     <div class="card"><span class="symbol">🧑‍🤝‍🧑</span><div class="label">Total Patients</div><strong id="patientCount">—</strong></div>
-     <div class="card"><span class="symbol">📅</span><div class="label">Appointments</div><strong id="appointmentCount">—</strong></div>
-    </div>
-    <div class="grid">
-     <div class="panel"><h3>Recent Hospitals</h3><div id="hospitalSummary" class="empty">তথ্য লোড হচ্ছে…</div></div>
-     <div class="panel"><h3>System Status</h3><p><span class="status active">Authenticated</span></p><p class="muted">Database: Supabase</p><p class="muted">Role: Super Admin</p></div>
-    </div>
-   </section>
-
-   <section id="hospitalDashboardView" class="hidden">
-    <div class="welcome">
-     <h2 id="hospitalWelcome">Hospital Dashboard</h2>
-     <div>আপনার হাসপাতালের ব্যবস্থাপনা</div>
-    </div>
-    <div class="cards">
-     <div class="card"><span class="symbol">👨‍⚕️</span><div class="label">Doctors</div><strong id="haDoctorCount">—</strong></div>
-     <div class="card"><span class="symbol">🧑‍🤝‍🧑</span><div class="label">Patients</div><strong id="haPatientCount">—</strong></div>
-     <div class="card"><span class="symbol">📅</span><div class="label">Appointments</div><strong id="haAppointmentCount">—</strong></div>
-     <div class="card"><span class="symbol">👥</span><div class="label">Hospital Users</div><strong id="haMemberCount">—</strong></div>
-    </div>
-    <div class="panel" style="margin-top:17px">
-     <h3>Hospital Information</h3>
-     <div id="hospitalInfo" class="muted">তথ্য লোড হচ্ছে…</div>
-    </div>
-    <p class="note" style="margin-top:15px">আপনি শুধু আপনার নিজের হাসপাতালের তথ্য পরিচালনা করতে পারবেন।</p>
-   </section>
-
-   <section id="listView" class="hidden">
-    <div class="panel">
-     <div class="toolbar">
-      <h3 id="listTitle">Records</h3>
-      <button class="secondary" id="refreshBtn">Refresh</button>
-     </div>
-     <div id="records"></div>
-    </div>
-   </section>
-
-   <section id="hospitalFormView" class="hidden">
-    <div class="panel">
-     <h3 id="hospitalFormTitle">নতুন হাসপাতাল ও Admin নিবন্ধন</h3>
-     <form id="hospitalForm">
-      <input type="hidden" id="hospitalId">
-      <div class="section-title">🏥 হাসপাতালের তথ্য</div>
-      <div class="form-grid">
-       <div class="field"><label>হাসপাতালের নাম *</label><input id="hName" required maxlength="150"></div>
-       <div class="field"><label>Slug *</label><input id="hSlug" required maxlength="150" placeholder="hospital-name"></div>
-       <div class="field"><label>মোবাইল নম্বর</label><input id="hPhone"></div>
-       <div class="field"><label>হাসপাতালের ইমেইল</label><input id="hEmail" type="email"></div>
-      </div>
-      <div class="field"><label>ঠিকানা</label><input id="hAddress"></div>
-      <div class="field">
-       <label>Hospital Status</label>
-       <select id="hStatus">
-        <option value="active">Active</option>
-        <option value="pending">Pending</option>
-        <option value="suspended">Suspended</option>
-       </select>
-      </div>
-
-      <div id="adminFields">
-       <div class="section-title">👤 Hospital Admin Account</div>
-       <div class="note">এই তথ্য দিয়ে হাসপাতালের Admin Login Account তৈরি হবে। Password কমপক্ষে ৮ অক্ষরের দিন।</div>
-       <div class="field"><label>Admin-এর পূর্ণ নাম *</label><input id="aName" required autocomplete="off"></div>
-       <div class="field"><label>Admin Login Email *</label><input id="aEmail" type="email" required autocomplete="off"></div>
-       <div class="field"><label>Admin Password *</label><input id="aPassword" type="password" minlength="8" required autocomplete="new-password"></div>
-      </div>
-
-      <div id="editNote" class="note hidden">এটি হাসপাতালের তথ্য সম্পাদনার ফর্ম।</div>
-      <button class="primary" type="submit" id="saveHospitalBtn">🏥 হাসপাতাল ও Admin তৈরি করুন</button>
-      <button class="secondary" type="button" id="cancelHospitalBtn">Cancel</button>
-     </form>
-    </div>
-   </section>
-
-  </main>
- </div>
-</div>
-
+<section id="app" class="hidden">
+ <header class="top"><strong>✚ Health Care Management</strong><div><span id="who" class="small"></span> <button id="logout" class="secondary">লগআউট</button></div></header>
+ <div class="layout"><aside id="sidebar"></aside><main>
+  <div class="head"><div><h1 id="pageTitle">ড্যাশবোর্ড</h1><div id="subTitle" class="muted small"></div></div><div class="toolbar"><button id="addBtn">＋ নতুন যোগ করুন</button></div></div>
+  <div id="content"></div>
+ </main></div>
+</section>
+<div id="modal" class="hidden"><div class="modalbox"><div class="head"><h2 id="modalTitle">নতুন তথ্য</h2><button class="secondary" id="closeModal">বন্ধ</button></div><form id="recordForm"><div id="formFields" class="formgrid"></div><div class="formactions"><button type="button" class="secondary" id="cancelForm">বাতিল</button><button type="submit">সংরক্ষণ করুন</button></div></form></div></div>
 <div id="toast"></div>
-
 <script>
-/* SUPABASE CONFIG */
-const SUPABASE_URL="https://zagmebjlyswokvwbnplm.supabase.co";
-const SUPABASE_ANON_KEY="sb_publishable_j67EP3xe1m7vMQmtWvSvQg_1wq9IKiZ";
-const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-
+(() => {
+const SUPABASE_URL='https://zagmebjlyswokvwbnplm.supabase.co';
+const SUPABASE_ANON_KEY='sb_publishable_j67EP3xe1m7vMQmtWvSvQg_1wq9IKiZ';
+const db=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+let user=null, profile=null, role='', hospitalId=null, hospitalName='', currentTable=null, currentRows=[], editingId=null, currentConfig=null;
 const $=id=>document.getElementById(id);
-let activeSession=null;
-let currentView="dashboard";
-let hospitalCache=[];
-let currentRole=null;
-let currentHospitalId=null;
-let currentHospital=null;
-
-function escapeHtml(value){
- return String(value??"").replace(/[&<>"']/g,c=>({
-  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
- }[c]));
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const toast=(s)=>{const t=$('toast');t.textContent=s;t.style.display='block';setTimeout(()=>t.style.display='none',3500)};
+const configs={
+ hospitals:{label:'হাসপাতাল',group:'সুপার অ্যাডমিন',fields:[['name','হাসপাতালের নাম','text',1],['slug','Slug','text',1],['phone','ফোন','text'],['email','ইমেইল','email'],['address','ঠিকানা','text'],['status','স্ট্যাটাস','select',['pending','active','suspended']]],search:['name','slug','phone','email']},
+ departments:{label:'বিভাগ',group:'হাসপাতাল',fields:[['name','বিভাগের নাম','text',1],['description','বিবরণ','textarea']],search:['name']},
+ doctors:{label:'ডাক্তার',group:'হাসপাতাল',fields:[['full_name','ডাক্তারের নাম','text',1],['specialty','বিশেষজ্ঞতা','text'],['department_id','বিভাগ ID','uuid'],['phone','ফোন','text'],['consultation_fee','ভিজিট ফি','number'],['status','স্ট্যাটাস','select',['active','inactive']]],search:['full_name','specialty','phone']},
+ patients:{label:'রোগী',group:'হাসপাতাল',fields:[['patient_no','রোগী নম্বর','text',1],['full_name','রোগীর নাম','text',1],['date_of_birth','জন্ম তারিখ','date'],['gender','লিঙ্গ','select',['পুরুষ','মহিলা','অন্যান্য']],['phone','ফোন','text'],['address','ঠিকানা','textarea']],search:['patient_no','full_name','phone']},
+ appointments:{label:'অ্যাপয়েন্টমেন্ট',group:'হাসপাতাল',fields:[['patient_id','Patient UUID','uuid',1],['doctor_id','Doctor UUID','uuid',1],['appointment_date','তারিখ','date',1],['appointment_time','সময়','time',1],['serial_number','সিরিয়াল','number'],['reason','কারণ','textarea'],['status','স্ট্যাটাস','select',['booked','completed','cancelled']]],search:['status','reason']},
+ staff:{label:'স্টাফ',group:'হাসপাতাল',fields:[['full_name','নাম','text',1],['designation','পদবি','text'],['department_id','বিভাগ UUID','uuid'],['phone','ফোন','text'],['email','ইমেইল','email'],['salary','বেতন','number'],['joining_date','যোগদানের তারিখ','date'],['status','স্ট্যাটাস','select',['active','inactive']]],search:['full_name','designation','phone']},
+ lab_tests:{label:'ল্যাব টেস্ট',group:'ডায়াগনস্টিক',fields:[['test_name','টেস্টের নাম','text',1],['category','ক্যাটাগরি','text'],['sample_type','নমুনা','text'],['price','মূল্য','number',1],['description','বিবরণ','textarea'],['status','স্ট্যাটাস','select',['active','inactive']]],search:['test_name','category']},
+ lab_orders:{label:'ল্যাব অর্ডার',group:'ডায়াগনস্টিক',fields:[['patient_id','Patient UUID','uuid',1],['doctor_id','Doctor UUID','uuid'],['order_no','অর্ডার নম্বর','text',1],['order_date','তারিখ ও সময়','datetime-local'],['status','স্ট্যাটাস','select',['pending','processing','completed','cancelled']],['notes','নোট','textarea'],['total_amount','মোট টাকা','number'],['discount','ছাড়','number'],['paid_amount','জমা','number']],search:['order_no','status']},
+ lab_order_items:{label:'ল্যাব অর্ডার আইটেম',group:'ডায়াগনস্টিক',fields:[['lab_order_id','Lab Order UUID','uuid',1],['test_id','Test UUID','uuid'],['test_name','টেস্টের নাম','text',1],['price','মূল্য','number'],['status','স্ট্যাটাস','select',['pending','processing','completed']]],search:['test_name','status']},
+ lab_results:{label:'ল্যাব রিপোর্ট',group:'ডায়াগনস্টিক',fields:[['order_item_id','Order Item UUID','uuid',1],['result_text','রেজাল্ট','textarea'],['reference_range','স্বাভাবিক সীমা','text'],['unit','একক','text'],['remarks','মন্তব্য','textarea'],['verified_at','যাচাইয়ের সময়','datetime-local'],['report_file_path','রিপোর্ট ফাইল পাথ','text']],search:['result_text','remarks']},
+ medicine_categories:{label:'ওষুধের ক্যাটাগরি',group:'ফার্মেসি',fields:[['name','ক্যাটাগরির নাম','text',1]],search:['name']},
+ suppliers:{label:'সরবরাহকারী',group:'ফার্মেসি',fields:[['name','নাম','text',1],['phone','ফোন','text'],['email','ইমেইল','email'],['address','ঠিকানা','textarea'],['opening_balance','প্রারম্ভিক বকেয়া','number']],search:['name','phone']},
+ medicines:{label:'ওষুধ',group:'ফার্মেসি',fields:[['category_id','Category UUID','uuid'],['name','ওষুধের নাম','text',1],['generic_name','জেনেরিক নাম','text'],['strength','শক্তি','text'],['manufacturer','প্রস্তুতকারক','text'],['unit','একক','text'],['purchase_price','ক্রয়মূল্য','number'],['sale_price','বিক্রয়মূল্য','number'],['stock_qty','স্টক পরিমাণ','number'],['reorder_level','সতর্কতা সীমা','number'],['status','স্ট্যাটাস','select',['active','inactive']]],search:['name','generic_name','manufacturer']},
+ pharmacy_purchases:{label:'ফার্মেসি ক্রয়',group:'ফার্মেসি',fields:[['supplier_id','Supplier UUID','uuid'],['purchase_no','ক্রয় নম্বর','text',1],['purchase_date','তারিখ','date',1],['total_amount','মোট টাকা','number'],['paid_amount','পরিশোধ','number'],['notes','নোট','textarea']],search:['purchase_no']},
+ pharmacy_purchase_items:{label:'ক্রয় আইটেম',group:'ফার্মেসি',fields:[['purchase_id','Purchase UUID','uuid',1],['medicine_id','Medicine UUID','uuid',1],['quantity','পরিমাণ','number'],['unit_price','একক মূল্য','number'],['batch_no','ব্যাচ নম্বর','text'],['expiry_date','মেয়াদ','date'],['line_total','মোট','number']],search:['batch_no']},
+ pharmacy_sales:{label:'ফার্মেসি বিক্রয়',group:'ফার্মেসি',fields:[['patient_id','Patient UUID','uuid'],['sale_no','বিক্রয় নম্বর','text',1],['sale_date','তারিখ ও সময়','datetime-local'],['total_amount','মোট টাকা','number'],['discount','ছাড়','number'],['paid_amount','জমা','number'],['payment_method','পেমেন্ট মাধ্যম','text']],search:['sale_no']},
+ pharmacy_sale_items:{label:'বিক্রয় আইটেম',group:'ফার্মেসি',fields:[['sale_id','Sale UUID','uuid',1],['medicine_id','Medicine UUID','uuid',1],['quantity','পরিমাণ','number'],['unit_price','একক মূল্য','number'],['line_total','মোট','number']],search:[]},
+ wards:{label:'ওয়ার্ড',group:'ইনডোর',fields:[['name','ওয়ার্ডের নাম','text',1],['ward_type','ধরন','text'],['floor_name','তলা','text'],['description','বিবরণ','textarea']],search:['name','ward_type']},
+ beds:{label:'বেড',group:'ইনডোর',fields:[['ward_id','Ward UUID','uuid',1],['bed_number','বেড নম্বর','text',1],['bed_type','বেডের ধরন','text'],['daily_rate','দৈনিক ভাড়া','number'],['status','স্ট্যাটাস','select',['available','occupied','maintenance']]],search:['bed_number','status']},
+ admissions:{label:'রোগী ভর্তি',group:'ইনডোর',fields:[['patient_id','Patient UUID','uuid',1],['doctor_id','Doctor UUID','uuid'],['bed_id','Bed UUID','uuid'],['admission_no','ভর্তি নম্বর','text',1],['admission_date','ভর্তির সময়','datetime-local'],['discharge_date','ছাড়পত্রের সময়','datetime-local'],['diagnosis','রোগ নির্ণয়','textarea'],['status','স্ট্যাটাস','select',['admitted','discharged','transferred']],['advance_amount','অগ্রিম','number'],['notes','নোট','textarea']],search:['admission_no','status','diagnosis']},
+ bed_transfers:{label:'বেড পরিবর্তন',group:'ইনডোর',fields:[['admission_id','Admission UUID','uuid',1],['from_bed_id','পুরোনো Bed UUID','uuid'],['to_bed_id','নতুন Bed UUID','uuid',1],['transfer_date','তারিখ ও সময়','datetime-local'],['reason','কারণ','textarea']],search:['reason']},
+ invoices:{label:'ইনভয়েস',group:'হিসাব',fields:[['patient_id','Patient UUID','uuid'],['invoice_no','ইনভয়েস নম্বর','text',1],['invoice_date','তারিখ ও সময়','datetime-local'],['subtotal','সাবটোটাল','number'],['discount','ছাড়','number'],['tax','ট্যাক্স','number'],['total_amount','মোট','number'],['paid_amount','জমা','number'],['status','স্ট্যাটাস','select',['unpaid','partial','paid','cancelled']],['notes','নোট','textarea']],search:['invoice_no','status']},
+ invoice_items:{label:'ইনভয়েস আইটেম',group:'হিসাব',fields:[['invoice_id','Invoice UUID','uuid',1],['item_name','আইটেমের নাম','text',1],['item_type','ধরন','text'],['quantity','পরিমাণ','number'],['unit_price','একক মূল্য','number'],['line_total','মোট','number']],search:['item_name','item_type']},
+ payments:{label:'পেমেন্ট / রসিদ',group:'হিসাব',fields:[['invoice_id','Invoice UUID','uuid'],['patient_id','Patient UUID','uuid'],['receipt_no','রসিদ নম্বর','text',1],['amount','টাকার পরিমাণ','number',1],['payment_method','পেমেন্ট মাধ্যম','text'],['payment_date','তারিখ ও সময়','datetime-local'],['reference_no','রেফারেন্স','text'],['notes','নোট','textarea']],search:['receipt_no','reference_no']},
+ income_entries:{label:'আয়',group:'হিসাব',fields:[['entry_date','তারিখ','date'],['category','ক্যাটাগরি','text',1],['description','বিবরণ','textarea'],['amount','টাকা','number',1],['payment_method','পেমেন্ট মাধ্যম','text'],['reference_no','রেফারেন্স','text']],search:['category','description']},
+ expense_entries:{label:'ব্যয়',group:'হিসাব',fields:[['entry_date','তারিখ','date'],['category','ক্যাটাগরি','text',1],['description','বিবরণ','textarea'],['amount','টাকা','number',1],['payment_method','পেমেন্ট মাধ্যম','text'],['reference_no','রেফারেন্স','text']],search:['category','description']},
+ salary_payments:{label:'বেতন প্রদান',group:'হিসাব',fields:[['staff_id','Staff UUID','uuid'],['doctor_id','Doctor UUID','uuid'],['payment_month','বেতন মাস','date',1],['basic_salary','মূল বেতন','number'],['bonus','বোনাস','number'],['deduction','কর্তন','number'],['paid_amount','পরিশোধ','number'],['payment_date','প্রদানের তারিখ','date'],['payment_method','পেমেন্ট মাধ্যম','text'],['notes','নোট','textarea']],search:['payment_method','notes']},
+ hospital_members:{label:'হাসপাতালের ব্যবহারকারী',group:'সুপার অ্যাডমিন',fields:[['user_id','User UUID','uuid',1],['role','Role','select',['hospital_admin','doctor','receptionist','lab_technician','pharmacist','accountant','staff']],['status','স্ট্যাটাস','select',['active','inactive']]],search:['role','status']}
+};
+const superMenu=['hospitals'];
+const groups=['সুপার অ্যাডমিন','হাসপাতাল','ডায়াগনস্টিক','ফার্মেসি','ইনডোর','হিসাব'];
+function allowedTables(){return Object.keys(configs).filter(t=>role==='super_admin'?superMenu.includes(t):!superMenu.includes(t)&&t!=='hospital_members');}
+function buildNav(){
+ let html='';
+ groups.forEach(g=>{let names=allowedTables().filter(t=>configs[t].group===g);if(!names.length)return;html+=`<div class="navgroup">${g}</div>`;names.forEach(t=>html+=`<button class="nav ${currentTable===t?'active':''}" data-table="${t}">${configs[t].label}</button>`);});
+ html+=`<div class="navgroup">সাধারণ</div><button class="nav ${!currentTable?'active':''}" data-home="1">▦ ড্যাশবোর্ড</button>`;
+ $('sidebar').innerHTML=html;
+ $('sidebar').querySelectorAll('[data-table]').forEach(b=>b.onclick=()=>openTable(b.dataset.table));
+ $('sidebar').querySelector('[data-home]').onclick=()=>{currentTable=null;buildNav();dashboard()};
 }
-
-function notify(message){
- $("toast").textContent=message;
- $("toast").style.display="block";
- setTimeout(()=>$("toast").style.display="none",4000);
+function setTitle(t,sub=''){ $('pageTitle').textContent=t;$('subTitle').textContent=sub; $('addBtn').classList.toggle('hidden',!currentTable || (role==='super_admin'&&currentTable==='hospitals'?false:false));}
+async function initSession(session){
+ user=session.user;
+ const {data:p,error}=await db.from('profiles').select('*').eq('id',user.id).maybeSingle();
+ if(error) throw error; profile=p;
+ if(p?.system_role==='super_admin'){role='super_admin';hospitalId=null;hospitalName='সকল হাসপাতাল';}
+ else{
+  const {data:m,error:me}=await db.from('hospital_members').select('hospital_id,role,status,hospitals(name)').eq('user_id',user.id).eq('status','active').limit(1).maybeSingle();
+  if(me)throw me;if(!m)throw new Error('এই অ্যাকাউন্টে কোনো সক্রিয় হাসপাতাল সদস্যপদ নেই। Super Admin-কে Hospital Admin access দিতে বলুন।');
+  if(m.role!=='hospital_admin')throw new Error('এই প্যানেলে আপাতত Hospital Admin role প্রয়োজন।');
+  role='hospital_admin';hospitalId=m.hospital_id;hospitalName=m.hospitals?.name||'হাসপাতাল';
+ }
+ $('who').textContent=(p?.full_name||user.email)+' · '+(role==='super_admin'?'Super Admin':hospitalName);
+ $('login').classList.add('hidden');$('app').classList.remove('hidden');currentTable=null;buildNav();dashboard();
 }
-function showError(message){$("error").textContent=message;}
-
-/* ROLE BASED LOGIN */
-async function showApp(session){
- activeSession=session;
-
- const {data:profile,error}=await db.from("profiles")
-  .select("full_name,system_role")
-  .eq("id",session.user.id).maybeSingle();
-
- if(error){
-  await db.auth.signOut();
-  activeSession=null;
-  showError("প্রোফাইল যাচাই করা যায়নি: "+error.message);
-  return;
- }
-
- if(profile?.system_role==="super_admin"){
-  currentRole="super_admin";
-  currentHospitalId=null;
-  currentHospital=null;
-
-  $("login").classList.add("hidden");
-  $("app").classList.remove("hidden");
-  $("superAdminNav").classList.remove("hidden");
-  $("hospitalAdminNav").classList.add("hidden");
-  $("adminName").textContent=profile.full_name||"Super Admin";
-  $("adminEmail").textContent=session.user.email||"";
-  $("heading").textContent="Super Admin Dashboard";
-
-  await showSuperDashboard();
-  return;
- }
-
- const {data:membership,error:memberError}=await db.from("hospital_members")
-  .select("hospital_id,role,status")
-  .eq("user_id",session.user.id)
-  .eq("status","active")
-  .eq("role","hospital_admin")
-  .maybeSingle();
-
- if(memberError||!membership){
-  await db.auth.signOut();
-  activeSession=null;
-  $("app").classList.add("hidden");
-  $("login").classList.remove("hidden");
-  showError("এই অ্যাকাউন্টে Active Super Admin অথবা Hospital Admin অনুমতি নেই।");
-  return;
- }
-
- currentRole="hospital_admin";
- currentHospitalId=membership.hospital_id;
-
- const {data:hospital,error:hospitalError}=await db.from("hospitals")
-  .select("id,name,slug,phone,email,address,status")
-  .eq("id",currentHospitalId)
-  .maybeSingle();
-
- if(hospitalError||!hospital||hospital.status!=="active"){
-  await db.auth.signOut();
-  activeSession=null;
-  $("app").classList.add("hidden");
-  $("login").classList.remove("hidden");
-  showError("আপনার হাসপাতালটি পাওয়া যায়নি অথবা Active নয়।");
-  return;
- }
-
- currentHospital=hospital;
- $("login").classList.add("hidden");
- $("app").classList.remove("hidden");
- $("superAdminNav").classList.add("hidden");
- $("hospitalAdminNav").classList.remove("hidden");
- $("adminName").textContent=profile?.full_name||"Hospital Admin";
- $("adminEmail").textContent=session.user.email||"";
- $("heading").textContent=hospital.name+" - Dashboard";
-
- document.querySelectorAll("[data-view]").forEach(b=>b.classList.remove("active"));
- document.querySelectorAll("[data-hospital-view]").forEach(b=>{
-  b.classList.toggle("active",b.dataset.hospitalView==="dashboard");
- });
-
- await showHospitalDashboard();
+$('loginForm').onsubmit=async e=>{e.preventDefault();$('loginMsg').textContent='লগইন হচ্ছে...';try{const {data,error}=await db.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error)throw error;await initSession(data.session);}catch(err){$('loginMsg').textContent=err.message||'লগইন ব্যর্থ';}};
+$('logout').onclick=async()=>{await db.auth.signOut();location.reload()};
+db.auth.getSession().then(({data})=>{if(data.session)initSession(data.session).catch(e=>toast(e.message));});
+db.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'){ $('app').classList.add('hidden');$('login').classList.remove('hidden');}});
+async function count(table){let q=db.from(table).select('*',{count:'exact',head:true});if(hospitalId)q=q.eq('hospital_id',hospitalId);const {count,error}=await q;if(error)throw error;return count||0}
+async function dashboard(){
+ currentTable=null;setTitle('ড্যাশবোর্ড',hospitalName);$('addBtn').classList.add('hidden');
+ const list=role==='super_admin'?['hospitals']:['doctors','patients','appointments','staff','lab_orders','medicines','admissions','invoices'];
+ $('content').innerHTML='<div class="cards">'+list.map(t=>`<div class="card"><div class="muted">${configs[t].label}</div><div class="metric" id="m_${t}">…</div></div>`).join('')+'</div><div class="panel"><h2>সিস্টেম নির্দেশনা</h2><p class="muted">বাম পাশের মডিউল থেকে তথ্য যোগ, দেখা, সম্পাদনা ও মুছে ফেলতে পারবেন। আপনার অ্যাকাউন্টের Supabase RLS নীতিমালা অনুযায়ী ডেটা নিয়ন্ত্রিত হবে।</p><div class="notice">গুরুত্বপূর্ণ: Pharmacy stock_qty এখন ওষুধের রেকর্ডে ম্যানুয়ালি আপডেট হয়। Purchase/Sale এন্ট্রি নিজে থেকে স্টক বাড়ায় বা কমায় না। পূর্ণ stock ledger ও atomic billing চালুর জন্য পরবর্তী ধাপে database transaction function প্রয়োজন।</div></div>';
+ for(const t of list){try{$('m_'+t).textContent=await count(t)}catch(e){$('m_'+t).textContent='—'}}
 }
-
-/* COUNTS */
-async function countRows(table,id){
- const {count,error}=await db.from(table).select("*",{count:"exact",head:true});
- $(id).textContent=error?"—":(count??0);
+function openTable(t){if(!allowedTables().includes(t))return;currentTable=t;currentConfig=configs[t];buildNav();$('addBtn').classList.remove('hidden');setTitle(currentConfig.label,hospitalName);loadRows();}
+async function loadRows(){
+ $('content').innerHTML='<div class="panel">তথ্য লোড হচ্ছে...</div>';
+ let q=db.from(currentTable).select('*').order('created_at',{ascending:false}).limit(300);
+ if(hospitalId)q=q.eq('hospital_id',hospitalId);
+ const {data,error}=await q;
+ if(error){$('content').innerHTML=`<div class="notice">তথ্য আনা যায়নি: ${esc(error.message)}</div>`;return;}
+ currentRows=data||[];renderRows();
 }
-
-async function showSuperDashboard(){
- $("dashboardView").classList.remove("hidden");
- $("hospitalDashboardView").classList.add("hidden");
- $("listView").classList.add("hidden");
- $("hospitalFormView").classList.add("hidden");
-
- await Promise.all([
-  countRows("hospitals","hospitalCount"),
-  countRows("doctors","doctorCount"),
-  countRows("patients","patientCount"),
-  countRows("appointments","appointmentCount")
- ]);
-
- const {data,error}=await db.from("hospitals")
-  .select("id,name,address,status,created_at")
-  .order("created_at",{ascending:false}).limit(5);
-
- if(error){
-  $("hospitalSummary").textContent="তথ্য লোড হয়নি: "+error.message;
-  return;
- }
- if(!data?.length){
-  $("hospitalSummary").textContent="এখনো কোনো হাসপাতাল নেই।";
-  return;
- }
-
- $("hospitalSummary").innerHTML=
-  '<div class="table-wrap"><table><thead><tr><th>Hospital</th><th>Status</th></tr></thead><tbody>'+
-  data.map(h=>`<tr><td>${escapeHtml(h.name)}</td><td><span class="status ${escapeHtml(h.status)}">${escapeHtml(h.status)}</span></td></tr>`).join("")+
-  '</tbody></table></div>';
+function renderRows(filter=''){
+ const cfg=currentConfig, cols=cfg.fields.map(f=>f[0]).filter(c=>currentRows.some(r=>c in r));
+ const search=filter.toLowerCase();
+ const rows=currentRows.filter(r=>!search||cfg.search.some(k=>String(r[k]??'').toLowerCase().includes(search)));
+ let html=`<div class="toolbar" style="margin-bottom:10px"><input id="searchRows" placeholder="তথ্য খুঁজুন..." value="${esc(filter)}"><span class="muted small">${rows.length} টি রেকর্ড (সর্বোচ্চ ৩০০)</span><button class="secondary" id="refreshRows">রিফ্রেশ</button></div><div class="tablewrap"><table><thead><tr>${cols.map(c=>`<th>${esc(cfg.fields.find(f=>f[0]===c)?.[1]||c)}</th>`).join('')}<th>কার্যক্রম</th></tr></thead><tbody>`;
+ if(!rows.length)html+=`<tr><td class="empty" colspan="${cols.length+1}">কোনো তথ্য পাওয়া যায়নি</td></tr>`;
+ rows.forEach(r=>{html+='<tr>'+cols.map(c=>`<td title="${esc(r[c])}">${esc(r[c])}</td>`).join('')+`<td class="actions">${currentTable==='hospitals'?`<button class="teal" data-admin="${r.id}">Admin তৈরি</button>`:''}<button class="secondary" data-edit="${r.id}">এডিট</button><button class="danger" data-del="${r.id}">ডিলিট</button></td></tr>`});
+ html+='</tbody></table></div>';
+ $('content').innerHTML=html;
+ $('searchRows').oninput=e=>renderRows(e.target.value);
+ $('refreshRows').onclick=loadRows;
+ $('content').querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>showForm(currentRows.find(r=>r.id===b.dataset.edit)));
+ $('content').querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>deleteRow(b.dataset.del));
+ $('content').querySelectorAll('[data-admin]').forEach(b=>b.onclick=()=>createHospitalAdmin(b.dataset.admin));
 }
-
-async function showHospitalDashboard(){
- $("dashboardView").classList.add("hidden");
- $("hospitalDashboardView").classList.remove("hidden");
- $("listView").classList.add("hidden");
- $("hospitalFormView").classList.add("hidden");
-
- $("hospitalWelcome").textContent=currentHospital?.name||"Hospital Dashboard";
-
- $("hospitalInfo").innerHTML=
-  `<b>${escapeHtml(currentHospital?.name)}</b><br>
-   ঠিকানা: ${escapeHtml(currentHospital?.address||"—")}<br>
-   ফোন: ${escapeHtml(currentHospital?.phone||"—")}<br>
-   ইমেইল: ${escapeHtml(currentHospital?.email||"—")}<br>
-   Status: ${escapeHtml(currentHospital?.status||"—")}`;
-
- const scopedCount=async(table,id)=>{
-  const {count,error}=await db.from(table)
-   .select("id",{count:"exact",head:true})
-   .eq("hospital_id",currentHospitalId);
-  $(id).textContent=error?"—":(count??0);
- };
-
- await Promise.all([
-  scopedCount("doctors","haDoctorCount"),
-  scopedCount("patients","haPatientCount"),
-  scopedCount("appointments","haAppointmentCount"),
-  scopedCount("hospital_members","haMemberCount")
- ]);
+function showForm(row=null){
+ editingId=row?.id||null;$('modalTitle').textContent=editingId?'তথ্য সম্পাদনা':'নতুন '+currentConfig.label;
+ let fields=currentConfig.fields.map(f=>{
+  const [name,label,type,extra]=f;let value=row?.[name]??'';
+  if(type==='textarea')return `<div style="grid-column:1/-1"><label>${esc(label)}</label><textarea name="${name}">${esc(value)}</textarea></div>`;
+  if(type==='select')return `<div><label>${esc(label)}</label><select name="${name}"><option value="">নির্বাচন করুন</option>${extra.map(x=>`<option ${value===x?'selected':''}>${esc(x)}</option>`).join('')}</select></div>`;
+  let inputType=type==='uuid'?'text':type;
+  if(type==='datetime-local'&&value)value=String(value).slice(0,16);
+  return `<div><label>${esc(label)}${extra===1?' *':''}</label><input name="${name}" type="${inputType}" ${extra===1?'required':''} value="${esc(value)}" ${type==='uuid'?'placeholder="সম্পর্কিত রেকর্ডের UUID"':''}></div>`;
+ }).join('');
+ $('formFields').innerHTML=fields;$('modal').classList.remove('hidden');
 }
-
-/* SUPER ADMIN NAVIGATION */
-function showView(view){
- if(currentRole!=="super_admin")return;
-
- currentView=view;
- $("dashboardView").classList.toggle("hidden",view!=="dashboard");
- $("hospitalDashboardView").classList.add("hidden");
- $("listView").classList.toggle("hidden",view==="dashboard");
- $("hospitalFormView").classList.add("hidden");
-
- if(view==="dashboard"){
-  $("heading").textContent="Super Admin Dashboard";
-  showSuperDashboard();
- }else{
-  openList(view);
- }
-}
-
-/* DATA LISTS */
-async function openList(view){
- const map={
-  hospitals:["Hospital Management","hospitals"],
-  approvals:["Hospital Approval","hospitals"],
-  doctors:["Doctors","doctors"],
-  patients:["Patients","patients"],
-  appointments:["Appointments","appointments"],
-  users:["User Management","profiles"],
-  members:["Hospital Users","hospital_members"]
- };
-
- const [title,table]=map[view]||map.hospitals;
- $("heading").textContent=title;
- $("listTitle").textContent=title;
- $("records").innerHTML='<div class="empty">তথ্য লোড হচ্ছে…</div>';
-
- let query=db.from(table).select("*");
-
- if(currentRole==="hospital_admin"){
-  if(!currentHospitalId)return;
-  if(["doctors","patients","appointments"].includes(view)){
-   query=query.eq("hospital_id",currentHospitalId);
-  }else if(view==="members"){
-   query=query.eq("hospital_id",currentHospitalId);
-  }else{
-   $("records").innerHTML='<div class="empty">এই পেজে প্রবেশের অনুমতি নেই।</div>';
-   return;
-  }
- }
-
- if(view==="approvals")query=query.eq("status","pending");
-
- const {data,error}=await query.order("created_at",{ascending:false}).limit(100);
-
- if(error){
-  $("records").innerHTML='<div class="empty">সমস্যা: '+escapeHtml(error.message)+'</div>';
-  return;
- }
-
- if(!data?.length){
-  $("records").innerHTML='<div class="empty">কোনো রেকর্ড পাওয়া যায়নি।</div>';
-  if(view==="hospitals"){
-   $("records").innerHTML+='<div style="text-align:center"><button class="primary" onclick="newHospital()">+ নতুন হাসপাতাল</button></div>';
-  }
-  return;
- }
-
- if(view==="hospitals"||view==="approvals"){
-  hospitalCache=data;
-  renderHospitals(data,view);
-  return;
- }
-
- const keys=Object.keys(data[0]).slice(0,7);
- $("records").innerHTML=
-  '<div class="table-wrap"><table><thead><tr>'+
-  keys.map(k=>'<th>'+escapeHtml(k)+'</th>').join("")+
-  '</tr></thead><tbody>'+
-  data.map(row=>'<tr>'+keys.map(k=>'<td>'+escapeHtml(row[k])+'</td>').join("")+'</tr>').join("")+
-  '</tbody></table></div>';
-}
-
-function renderHospitals(data,view){
- $("records").innerHTML=`
-  <div class="toolbar">
-   ${view==="hospitals"?'<button class="primary" onclick="newHospital()">+ নতুন হাসপাতাল ও Admin</button>':''}
-   <span class="muted">মোট রেকর্ড: ${data.length}</span>
-  </div>
-  <div class="table-wrap"><table>
-   <thead><tr><th>নাম</th><th>ফোন</th><th>ইমেইল</th><th>ঠিকানা</th><th>Status</th><th>Action</th></tr></thead>
-   <tbody>
-   ${data.map((h,i)=>`
-    <tr>
-     <td>${escapeHtml(h.name)}</td>
-     <td>${escapeHtml(h.phone)}</td>
-     <td>${escapeHtml(h.email)}</td>
-     <td>${escapeHtml(h.address)}</td>
-     <td><span class="status ${escapeHtml(h.status)}">${escapeHtml(h.status)}</span></td>
-     <td>
-      <button class="secondary" onclick="editHospital(${i})">Edit</button>
-      <button class="primary" onclick="createAdminForExisting(${i})">Create Admin</button>
-      ${h.status!=="active"?`<button class="success" onclick="changeHospitalStatus(${i},'active')">Activate</button>`:""}
-      ${h.status!=="suspended"?`<button class="danger" onclick="changeHospitalStatus(${i},'suspended')">Suspend</button>`:""}
-     </td>
-    </tr>`).join("")}
-   </tbody>
-  </table></div>`;
-}
-
-/* HOSPITAL FORM */
-function newHospital(){
- if(currentRole!=="super_admin")return;
-
- $("dashboardView").classList.add("hidden");
- $("hospitalDashboardView").classList.add("hidden");
- $("listView").classList.add("hidden");
- $("hospitalFormView").classList.remove("hidden");
-
- $("hospitalForm").reset();
- $("hospitalId").value="";
- $("hStatus").value="active";
- $("adminFields").classList.remove("hidden");
- $("editNote").classList.add("hidden");
-
- $("aName").required=true;
- $("aEmail").required=true;
- $("aPassword").required=true;
-
- $("hospitalFormTitle").textContent="নতুন হাসপাতাল ও Admin নিবন্ধন";
- $("saveHospitalBtn").textContent="🏥 হাসপাতাল ও Admin তৈরি করুন";
- $("heading").textContent="Hospital Registration";
-}
-
-function editHospital(index){
- const h=hospitalCache[index];
- if(!h)return;
-
- newHospital();
- $("hospitalId").value=h.id;
- $("hName").value=h.name||"";
- $("hSlug").value=h.slug||"";
- $("hPhone").value=h.phone||"";
- $("hEmail").value=h.email||"";
- $("hAddress").value=h.address||"";
- $("hStatus").value=h.status||"pending";
-
- $("adminFields").classList.add("hidden");
- $("editNote").classList.remove("hidden");
- $("aName").required=false;
- $("aEmail").required=false;
- $("aPassword").required=false;
-
- $("hospitalFormTitle").textContent="হাসপাতালের তথ্য সম্পাদনা";
- $("saveHospitalBtn").textContent="তথ্য আপডেট করুন";
- $("heading").textContent="Edit Hospital";
-}
-
-$("hName").addEventListener("input",()=>{
- if(!$("hospitalId").value){
-  $("hSlug").value=$("hName").value.trim().toLowerCase()
-   .replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
- }
-});
-
-$("cancelHospitalBtn").addEventListener("click",()=>showView("hospitals"));
-
-/* CREATE HOSPITAL ADMIN USING EDGE FUNCTION */
-async function callCreateAdmin(hospitalId,fullName,email,password){
- const {data:{session},error:sessionError}=await db.auth.getSession();
-
- if(sessionError||!session){
-  throw new Error("আপনার Login Session পাওয়া যায়নি। আবার Login করুন।");
- }
-
- const {data,error}=await db.functions.invoke("create-hospital-admin",{
-  body:{
-   hospital_id:hospitalId,
-   full_name:fullName,
-   email:email,
-   password:password
-  },
-  headers:{
-   Authorization:"Bearer "+session.access_token
-  }
- });
-
- if(error)throw new Error(error.message||"Admin তৈরি করা যায়নি");
- if(!data||!data.success){
-  throw new Error(data?.error||"Admin তৈরি হয়নি");
- }
- return data;
-}
-
-$("hospitalForm").addEventListener("submit",async e=>{
- e.preventDefault();
-
- if(currentRole!=="super_admin"||!activeSession){
-  alert("Super Admin Login প্রয়োজন।");
-  return;
- }
-
- const id=$("hospitalId").value;
- const hospital={
-  name:$("hName").value.trim(),
-  slug:$("hSlug").value.trim().toLowerCase(),
-  phone:$("hPhone").value.trim()||null,
-  email:$("hEmail").value.trim()||null,
-  address:$("hAddress").value.trim()||null,
-  status:$("hStatus").value
- };
-
- if(!hospital.name||!hospital.slug){
-  alert("হাসপাতালের নাম ও Slug লিখুন।");
-  return;
- }
-
- const isNew=!id;
- const fullName=$("aName").value.trim();
- const adminEmail=$("aEmail").value.trim().toLowerCase();
- const adminPassword=$("aPassword").value;
-
- if(isNew){
-  if(!fullName||!adminEmail||!adminPassword){
-   alert("Admin-এর নাম, Email ও Password দিন।");
-   return;
-  }
-  if(adminPassword.length<8){
-   alert("Admin Password কমপক্ষে ৮ অক্ষরের হতে হবে।");
-   return;
-  }
-  if(hospital.status!=="active"){
-   alert("Admin তৈরি করতে হাসপাতালের Status Active রাখুন।");
-   return;
-  }
- }
-
- $("saveHospitalBtn").disabled=true;
- $("saveHospitalBtn").textContent="অপেক্ষা করুন...";
-
+function closeForm(){$('modal').classList.add('hidden');$('recordForm').reset();editingId=null}
+$('closeModal').onclick=closeForm;$('cancelForm').onclick=closeForm;$('modal').onclick=e=>{if(e.target===$('modal'))closeForm()};
+$('addBtn').onclick=()=>{if(currentTable)showForm()};
+$('recordForm').onsubmit=async e=>{
+ e.preventDefault();if(!currentTable)return;
+ const form=new FormData(e.target),payload={};
+ currentConfig.fields.forEach(f=>{const k=f[0],v=form.get(k);if(v!==null&&v!=='' ){let type=f[2];payload[k]=['number'].includes(type)?Number(v):v;}});
+ if(hospitalId)payload.hospital_id=hospitalId;
+ if(!editingId&&currentConfig.fields.some(f=>f[0]==='created_by'))payload.created_by=user.id;
+ if(currentTable==='hospitals'&&!editingId)payload.created_by=user.id;
+ if(currentTable==='hospital_members'&&!payload.status)payload.status='active';
  try{
-  if(isNew){
-   hospital.created_by=activeSession.user.id;
-
-   const {data,error}=await db.from("hospitals")
-    .insert(hospital).select("id").single();
-
-   if(error)throw new Error("হাসপাতাল তৈরি হয়নি: "+error.message);
-
-   try{
-    await callCreateAdmin(data.id,fullName,adminEmail,adminPassword);
-   }catch(adminError){
-    throw new Error(
-     "হাসপাতাল তৈরি হয়েছে, কিন্তু Admin তৈরি হয়নি। হাসপাতালের তালিকা থেকে Create Admin চাপ দিয়ে আবার চেষ্টা করুন। কারণ: "+
-     adminError.message
-    );
-   }
-
-   alert(
-    "সফল!\nহাসপাতাল: "+hospital.name+
-    "\nAdmin Email: "+adminEmail+
-    "\nHospital Admin Account তৈরি হয়েছে।"
-   );
-   notify("হাসপাতাল ও Admin সফলভাবে তৈরি হয়েছে!");
-  }else{
-   const {error}=await db.from("hospitals")
-    .update(hospital).eq("id",id);
-
-   if(error)throw new Error("আপডেট হয়নি: "+error.message);
-   notify("হাসপাতালের তথ্য আপডেট হয়েছে।");
-  }
-
-  showView("hospitals");
-
- }catch(error){
-  alert(error.message||String(error));
- }finally{
-  $("saveHospitalBtn").disabled=false;
-  $("saveHospitalBtn").textContent=isNew?
-   "🏥 হাসপাতাল ও Admin তৈরি করুন":"তথ্য আপডেট করুন";
- }
-});
-
-/* CREATE ADMIN FOR EXISTING HOSPITAL */
-async function createAdminForExisting(index){
- const h=hospitalCache[index];
- if(!h)return;
-
- if(h.status!=="active"){
-  alert("প্রথমে হাসপাতালটি Active করুন।");
-  return;
- }
-
- const fullName=prompt("Hospital Admin-এর পূর্ণ নাম লিখুন:");
- if(!fullName)return;
-
- const email=prompt("Admin Login Email লিখুন:");
- if(!email)return;
-
- const password=prompt("Admin Password লিখুন (কমপক্ষে ৮ অক্ষর):");
- if(!password)return;
-
- if(password.length<8){
-  alert("Password কমপক্ষে ৮ অক্ষরের হতে হবে।");
-  return;
- }
-
- if(!confirm(h.name+" হাসপাতালের জন্য Admin তৈরি করবেন?"))return;
-
+  let result;
+  if(editingId)result=await db.from(currentTable).update(payload).eq('id',editingId).select();
+  else result=await db.from(currentTable).insert(payload).select();
+  if(result.error)throw result.error;
+  closeForm();toast('তথ্য সফলভাবে সংরক্ষিত হয়েছে');await loadRows();
+ }catch(err){toast('সংরক্ষণ হয়নি: '+err.message)}
+};
+async function createHospitalAdmin(hid){
+ const full_name=prompt('Hospital Admin-এর পূর্ণ নাম লিখুন:');if(!full_name)return;
+ const email=prompt('Admin-এর ইমেইল লিখুন:');if(!email)return;
+ const password=prompt('Admin-এর জন্য নতুন শক্তিশালী পাসওয়ার্ড দিন (কমপক্ষে ৮ অক্ষর):');if(!password)return;
+ if(password.length<8){toast('পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে');return;}
  try{
-  await callCreateAdmin(h.id,fullName.trim(),email.trim().toLowerCase(),password);
-  alert("Hospital Admin সফলভাবে তৈরি হয়েছে!\nEmail: "+email);
-  notify("Hospital Admin তৈরি হয়েছে।");
- }catch(error){
-  alert("Admin তৈরি হয়নি: "+error.message);
- }
+  const {data:{session}}=await db.auth.getSession();
+  const {data,error}=await db.functions.invoke('create-hospital-admin',{body:{hospital_id:hid,full_name,email,password},headers:{Authorization:'Bearer '+session.access_token}});
+  if(error)throw error;
+  toast('Hospital Admin তৈরি হয়েছে: '+email);
+ }catch(err){toast('Admin তৈরি হয়নি: '+(err.message||'ত্রুটি'))}
 }
-
-/* HOSPITAL STATUS */
-async function changeHospitalStatus(index,status){
- const h=hospitalCache[index];
- if(!h)return;
-
- if(!confirm(h.name+" হাসপাতালের Status "+status+" করতে চান?"))return;
-
- const {error}=await db.from("hospitals")
-  .update({status}).eq("id",h.id);
-
- if(error){
-  alert("সমস্যা: "+error.message);
-  return;
- }
-
- notify("Hospital status updated.");
- await showSuperDashboard();
- await openList(currentView);
+async function deleteRow(id){
+ if(!confirm('এই রেকর্ডটি মুছে ফেলতে চান?'))return;
+ const {error}=await db.from(currentTable).delete().eq('id',id);
+ if(error)toast('ডিলিট হয়নি: '+error.message);else{toast('রেকর্ড মুছে ফেলা হয়েছে');loadRows()}
 }
-
-/* LOGIN */
-$("loginForm").addEventListener("submit",async e=>{
- e.preventDefault();
- showError("");
-
- $("loginBtn").disabled=true;
- $("loginBtn").textContent="Signing in...";
-
- const {data,error}=await db.auth.signInWithPassword({
-  email:$("email").value.trim(),
-  password:$("password").value
- });
-
- $("loginBtn").disabled=false;
- $("loginBtn").textContent="Login";
-
- if(error){
-  showError("Login হয়নি: "+error.message);
-  return;
- }
-
- await showApp(data.session);
-});
-
-/* LOGOUT */
-async function logout(){
- await db.auth.signOut();
- activeSession=null;
- currentRole=null;
- currentHospitalId=null;
- currentHospital=null;
- location.reload();
-}
-$("logoutBtn").addEventListener("click",logout);
-$("hospitalLogoutBtn").addEventListener("click",logout);
-
-/* SUPER ADMIN MENU */
-document.querySelectorAll("[data-view]").forEach(button=>{
- button.addEventListener("click",()=>{
-  document.querySelectorAll("[data-view]").forEach(b=>{
-   b.classList.toggle("active",b===button);
-  });
-  $("sidebar").classList.remove("open");
-  showView(button.dataset.view);
- });
-});
-
-/* HOSPITAL ADMIN MENU */
-document.querySelectorAll("[data-hospital-view]").forEach(button=>{
- button.addEventListener("click",()=>{
-  if(currentRole!=="hospital_admin")return;
-
-  document.querySelectorAll("[data-hospital-view]").forEach(b=>{
-   b.classList.toggle("active",b===button);
-  });
-
-  $("sidebar").classList.remove("open");
-
-  const view=button.dataset.hospitalView;
-
-  if(view==="dashboard"){
-   $("heading").textContent=(currentHospital?.name||"Hospital")+" - Dashboard";
-   showHospitalDashboard();
-  }else{
-   $("hospitalDashboardView").classList.add("hidden");
-   $("dashboardView").classList.add("hidden");
-   $("listView").classList.remove("hidden");
-   $("hospitalFormView").classList.add("hidden");
-   currentView=view;
-   openList(view);
-  }
- });
-});
-
-$("menuBtn").addEventListener("click",()=>{
- $("sidebar").classList.toggle("open");
-});
-
-$("refreshBtn").addEventListener("click",()=>{
- if(currentRole==="super_admin")showView(currentView);
- else if(currentRole==="hospital_admin"){
-  if(currentView==="dashboard")showHospitalDashboard();
-  else openList(currentView);
- }
-});
-
-/* RESTORE SESSION */
-(async()=>{
- const {data,error}=await db.auth.getSession();
- if(!error&&data.session){
-  await showApp(data.session);
- }
 })();
 </script>
-</body>
-</html>
+</body></html>

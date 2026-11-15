@@ -4,123 +4,371 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>HCMS | Super Admin</title>
+<meta name="theme-color" content="#102b50">
+<title>HCMS | Super Admin Dashboard</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
+:root{
+ --navy:#102b50;
+ --blue:#1264d8;
+ --bg:#f3f6fc;
+ --muted:#718096;
+ --line:#e6ebf2;
+}
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f3f6fc;color:#182943}
-.hidden{display:none!important}
+body{
+ margin:0;
+ font-family:Arial,sans-serif;
+ background:var(--bg);
+ color:#182943;
+}
 button,input{font:inherit}
 button{cursor:pointer}
-#login{min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(135deg,#102b50,#1766bd)}
-.login-card{background:white;width:min(420px,100%);padding:30px;border-radius:18px;box-shadow:0 20px 60px #071c3b55}
-.logo{font-size:27px;font-weight:bold;color:#1264d8}
-.muted{color:#718096;font-size:14px}
+.hidden{display:none!important}
+
+/* LOGIN */
+#login{
+ min-height:100vh;
+ display:grid;
+ place-items:center;
+ padding:20px;
+ background:linear-gradient(135deg,#102b50,#1766bd);
+}
+.login-card{
+ background:white;
+ width:min(420px,100%);
+ padding:30px;
+ border-radius:18px;
+ box-shadow:0 20px 60px #071c3b55;
+}
+.logo{
+ font-size:27px;
+ font-weight:bold;
+ color:var(--blue);
+}
+.muted{color:var(--muted);font-size:14px}
 .field{margin:16px 0}
-.field label{display:block;font-size:13px;margin-bottom:7px;font-weight:bold}
-.field input{width:100%;padding:13px;border:1px solid #d9e1ec;border-radius:9px}
-.primary{background:#1264d8;color:white;border:0;border-radius:9px;padding:12px 16px;font-weight:bold}
+.field label{
+ display:block;
+ font-size:13px;
+ margin-bottom:7px;
+ font-weight:bold;
+}
+.field input{
+ width:100%;
+ padding:13px;
+ border:1px solid #d9e1ec;
+ border-radius:9px;
+}
+.primary{
+ background:var(--blue);
+ color:white;
+ border:0;
+ border-radius:9px;
+ padding:12px 16px;
+ font-weight:bold;
+}
 .wide{width:100%}
-#error{color:#c62828;font-size:13px;min-height:20px}
-.sidebar{position:fixed;inset:0 auto 0 0;width:250px;background:#102b50;color:white;padding:22px 14px;overflow:auto;z-index:5}
-.brand{font-size:23px;font-weight:bold;padding:5px 10px 25px}
-.brand small{display:block;font-size:12px;font-weight:normal;color:#bdcde0}
-.nav-label{font-size:11px;color:#9db1ca;padding:15px 10px 7px}
-.nav button{display:block;width:100%;border:0;background:transparent;color:#e4edf8;text-align:left;padding:12px;border-radius:9px;margin:3px 0}
-.nav button.active,.nav button:hover{background:#1765ca}
-.main{margin-left:250px;min-width:0}
-.top{height:76px;background:white;border-bottom:1px solid #e6ebf2;display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0}
+#error{
+ color:#c62828;
+ font-size:13px;
+ min-height:20px;
+}
+
+/* SIDEBAR */
+.sidebar{
+ position:fixed;
+ inset:0 auto 0 0;
+ width:250px;
+ background:var(--navy);
+ color:white;
+ padding:22px 14px;
+ overflow:auto;
+ z-index:5;
+}
+.brand{
+ font-size:23px;
+ font-weight:bold;
+ padding:5px 10px 25px;
+}
+.brand small{
+ display:block;
+ font-size:12px;
+ font-weight:normal;
+ color:#bdcde0;
+}
+.nav-label{
+ font-size:11px;
+ color:#9db1ca;
+ padding:15px 10px 7px;
+}
+.nav button{
+ display:block;
+ width:100%;
+ border:0;
+ background:transparent;
+ color:#e4edf8;
+ text-align:left;
+ padding:12px;
+ border-radius:9px;
+ margin:3px 0;
+}
+.nav button.active,
+.nav button:hover{
+ background:#1765ca;
+}
+
+/* MAIN */
+.main{
+ margin-left:250px;
+ min-width:0;
+}
+.top{
+ height:76px;
+ background:white;
+ border-bottom:1px solid var(--line);
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ padding:0 28px;
+ position:sticky;
+ top:0;
+ z-index:3;
+}
 .top h1{font-size:20px;margin:0}
 .user{font-size:13px;text-align:right}
-.content{padding:26px;max-width:1500px;margin:auto}
-.welcome{background:linear-gradient(110deg,#1059b7,#1686d9);color:white;border-radius:16px;padding:24px;margin-bottom:20px}
+.content{
+ padding:26px;
+ max-width:1500px;
+ margin:auto;
+}
+.welcome{
+ background:linear-gradient(110deg,#1059b7,#1686d9);
+ color:white;
+ border-radius:16px;
+ padding:24px;
+ margin-bottom:20px;
+}
 .welcome h2{margin:0 0 5px}
-.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px}
-.card,.panel{background:white;border:1px solid #e6ebf2;border-radius:14px;padding:19px;box-shadow:0 4px 16px #18345a08}
-.card .label{color:#718096;font-size:13px}
-.card strong{display:block;font-size:29px;margin-top:8px;color:#142e52}
-.card .symbol{float:right;font-size:24px}
-.grid{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;margin-top:18px}
-.panel h3{margin:0 0 15px;font-size:16px}
-table{width:100%;border-collapse:collapse;min-width:500px}
-th,td{text-align:left;padding:12px 10px;border-bottom:1px solid #e6ebf2;font-size:13px}
-th{color:#718096}
+.cards{
+ display:grid;
+ grid-template-columns:repeat(4,minmax(0,1fr));
+ gap:15px;
+}
+.card,.panel{
+ background:white;
+ border:1px solid var(--line);
+ border-radius:14px;
+ padding:19px;
+ box-shadow:0 4px 16px #18345a08;
+}
+.card .label{
+ color:var(--muted);
+ font-size:13px;
+}
+.card strong{
+ display:block;
+ font-size:29px;
+ margin-top:8px;
+ color:#142e52;
+}
+.card .symbol{
+ float:right;
+ font-size:24px;
+}
+.grid{
+ display:grid;
+ grid-template-columns:1.3fr 1fr;
+ gap:16px;
+ margin-top:18px;
+}
+.panel h3{
+ margin:0 0 15px;
+ font-size:16px;
+}
+table{
+ width:100%;
+ border-collapse:collapse;
+ min-width:500px;
+}
+th,td{
+ text-align:left;
+ padding:12px 10px;
+ border-bottom:1px solid var(--line);
+ font-size:13px;
+}
+th{color:var(--muted)}
 .table-wrap{overflow:auto}
-.pill{display:inline-block;padding:5px 9px;border-radius:20px;background:#e6f7ef;color:#12804c;font-size:11px}
-.empty{padding:22px;text-align:center;color:#718096;font-size:13px}
-.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:15px}
-.menu-btn{display:none;border:0;background:#edf3fb;padding:9px;border-radius:8px}
-#toast{position:fixed;bottom:20px;right:20px;background:#142e52;color:white;padding:12px 16px;border-radius:9px;display:none;z-index:10}
-@media(max-width:1000px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.grid{grid-template-columns:1fr}}
+.pill{
+ display:inline-block;
+ padding:5px 9px;
+ border-radius:20px;
+ background:#e6f7ef;
+ color:#12804c;
+ font-size:11px;
+}
+.empty{
+ padding:22px;
+ text-align:center;
+ color:var(--muted);
+ font-size:13px;
+}
+.toolbar{
+ display:flex;
+ gap:10px;
+ align-items:center;
+ flex-wrap:wrap;
+ margin-bottom:15px;
+}
+.menu-btn{
+ display:none;
+ border:0;
+ background:#edf3fb;
+ padding:9px;
+ border-radius:8px;
+}
+#toast{
+ position:fixed;
+ bottom:20px;
+ right:20px;
+ background:#142e52;
+ color:white;
+ padding:12px 16px;
+ border-radius:9px;
+ display:none;
+ z-index:10;
+}
+
+@media(max-width:1000px){
+ .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .grid{grid-template-columns:1fr}
+}
 @media(max-width:700px){
-.sidebar{transform:translateX(-100%);transition:.2s}
-.sidebar.open{transform:translateX(0)}
-.main{margin-left:0}
-.menu-btn{display:block}
-.top{padding:0 15px}
-.content{padding:15px}
-.cards{gap:9px}
-.card{padding:14px}
-.card strong{font-size:24px}
-.top h1{font-size:16px}
+ .sidebar{
+  transform:translateX(-100%);
+  transition:.2s;
+ }
+ .sidebar.open{transform:translateX(0)}
+ .main{margin-left:0}
+ .menu-btn{display:block}
+ .top{padding:0 15px}
+ .content{padding:15px}
+ .cards{gap:9px}
+ .card{padding:14px}
+ .card strong{font-size:24px}
+ .top h1{font-size:16px}
 }
 </style>
 </head>
+
 <body>
 
+<!-- LOGIN PAGE -->
 <section id="login">
  <div class="login-card">
   <div class="logo">✚ HCMS</div>
   <h2>Super Admin Login</h2>
   <p class="muted">Health Care Management System</p>
+
   <form id="loginForm">
    <div class="field">
     <label>Email Address</label>
-    <input id="email" type="email" required placeholder="Admin Email">
+    <input id="email" type="email"
+     autocomplete="username"
+     required placeholder="Admin Email">
    </div>
+
    <div class="field">
     <label>Password</label>
-    <input id="password" type="password" required placeholder="Password">
+    <input id="password" type="password"
+     autocomplete="current-password"
+     required placeholder="Password">
    </div>
+
    <div id="error"></div>
-   <button class="primary wide" id="loginBtn">Login</button>
+   <button class="primary wide" id="loginBtn">
+    Login
+   </button>
   </form>
-  <p class="muted">আপনার পাসওয়ার্ড কারও সঙ্গে শেয়ার করবেন না।</p>
+
+  <p class="muted">
+   আপনার Password কারও সঙ্গে শেয়ার করবেন না।
+  </p>
  </div>
 </section>
 
+<!-- ADMIN DASHBOARD -->
 <div id="app" class="hidden">
+
  <aside class="sidebar" id="sidebar">
-  <div class="brand">✚ HCMS
+  <div class="brand">
+   ✚ HCMS
    <small>Health Care Management System</small>
   </div>
+
   <div class="nav-label">MAIN MENU</div>
+
   <nav class="nav">
-   <button class="active" data-view="dashboard">▦ Dashboard</button>
-   <button data-view="hospitals">🏥 Hospital Management</button>
-   <button data-view="approvals">✓ Hospital Approval</button>
-   <button data-view="doctors">👨‍⚕️ Doctors</button>
-   <button data-view="patients">🧑 Patients</button>
-   <button data-view="appointments">📅 Appointments</button>
+   <button class="active" data-view="dashboard">
+    ▦ Dashboard
+   </button>
+
+   <button data-view="hospitals">
+    🏥 Hospital Management
+   </button>
+
+   <button data-view="approvals">
+    ✓ Hospital Approval
+   </button>
+
+   <button data-view="doctors">
+    👨‍⚕️ Doctors
+   </button>
+
+   <button data-view="patients">
+    🧑 Patients
+   </button>
+
+   <button data-view="appointments">
+    📅 Appointments
+   </button>
   </nav>
+
   <div class="nav-label">ADMINISTRATION</div>
+
   <nav class="nav">
-   <button data-view="revenue">৳ Revenue & Finance</button>
-   <button data-view="reports">▤ Reports</button>
-   <button data-view="users">♙ User Management</button>
+   <button data-view="revenue">
+    ৳ Revenue & Finance
+   </button>
+
+   <button data-view="reports">
+    ▤ Reports
+   </button>
+
+   <button data-view="users">
+    ♙ User Management
+   </button>
   </nav>
+
   <div class="nav-label">ACCOUNT</div>
+
   <nav class="nav">
-   <button id="logoutBtn">⇥ Logout</button>
+   <button id="logoutBtn">
+    ⇥ Logout
+   </button>
   </nav>
  </aside>
 
  <div class="main">
+
   <header class="top">
    <div style="display:flex;align-items:center;gap:12px">
     <button class="menu-btn" id="menuBtn">☰</button>
     <h1 id="heading">Super Admin Dashboard</h1>
    </div>
+
    <div class="user">
     <b id="adminName">Super Admin</b><br>
     <span id="adminEmail" class="muted"></span>
@@ -128,59 +376,85 @@ th{color:#718096}
   </header>
 
   <main class="content">
+
+   <!-- DASHBOARD -->
    <section id="dashboardView">
+
     <div class="welcome">
      <h2>Welcome to HCMS</h2>
-     <div>আপনার Multi-Hospital Management System-এর কেন্দ্রীয় ড্যাশবোর্ড</div>
+     <div>
+      আপনার Multi-Hospital Management System-এর কেন্দ্রীয় ড্যাশবোর্ড
+     </div>
     </div>
 
     <div class="cards">
+
      <div class="card">
       <span class="symbol">🏥</span>
       <div class="label">Total Hospitals</div>
       <strong id="hospitalCount">—</strong>
      </div>
+
      <div class="card">
       <span class="symbol">👨‍⚕️</span>
       <div class="label">Total Doctors</div>
       <strong id="doctorCount">—</strong>
      </div>
+
      <div class="card">
       <span class="symbol">🧑‍🤝‍🧑</span>
       <div class="label">Total Patients</div>
       <strong id="patientCount">—</strong>
      </div>
+
      <div class="card">
       <span class="symbol">📅</span>
       <div class="label">Appointments</div>
       <strong id="appointmentCount">—</strong>
      </div>
+
     </div>
 
     <div class="grid">
+
      <div class="panel">
       <h3>Hospital Overview</h3>
-      <div class="muted">ডেটাবেস থেকে হাসপাতালের তালিকা</div>
-      <div id="hospitalSummary" class="empty">তথ্য লোড হচ্ছে…</div>
+      <div class="muted">
+       ডেটাবেস থেকে হাসপাতালের তালিকা
+      </div>
+      <div id="hospitalSummary" class="empty">
+       তথ্য লোড হচ্ছে…
+      </div>
      </div>
+
      <div class="panel">
       <h3>System Status</h3>
       <p><span class="pill">Authenticated</span></p>
-      <p class="muted">Super Admin role যাচাই করা হয়েছে।</p>
+      <p class="muted">
+       Super Admin role যাচাই করা হয়েছে।
+      </p>
       <p class="muted">Database: Supabase</p>
      </div>
+
     </div>
    </section>
 
+   <!-- MODULE LIST -->
    <section id="listView" class="hidden">
     <div class="panel">
+
      <div class="toolbar">
       <h3 id="listTitle">Records</h3>
-      <button class="primary" id="refreshBtn">Refresh</button>
+      <button class="primary" id="refreshBtn">
+       Refresh
+      </button>
      </div>
+
      <div class="table-wrap" id="records"></div>
+
     </div>
    </section>
+
   </main>
  </div>
 </div>
@@ -188,8 +462,14 @@ th{color:#718096}
 <div id="toast"></div>
 
 <script>
-const SUPABASE_URL = "https://gqrlkfjpjpvrwrsvmyri.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_j67EP3xe1m7vMQmtWvSvQg_1wq9IKiZ";
+
+/* SUPABASE CONNECTION */
+
+const SUPABASE_URL =
+ "https://zagmebjlyswokvwbnplm.supabase.co";
+
+const SUPABASE_ANON_KEY =
+ "sb_publishable_j67EP3xe1m7vMQmtWvSvQg_1wq9IKiZ";
 
 const db = window.supabase.createClient(
  SUPABASE_URL,
@@ -205,15 +485,24 @@ function showError(message){
 }
 
 function escapeHtml(value){
- return String(value ?? "").replace(/[&<>"']/g, c => ({
-  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ return String(value ?? "").replace(/[&<>"']/g,c=>({
+  "&":"&amp;",
+  "<":"&lt;",
+  ">":"&gt;",
+  '"':"&quot;",
+  "'":"&#39;"
  }[c]));
 }
 
+/* VERIFY SUPER ADMIN */
+
 async function showApp(session){
+
  $("login").classList.add("hidden");
  $("app").classList.remove("hidden");
- $("adminEmail").textContent = session.user.email || "";
+
+ $("adminEmail").textContent =
+  session.user.email || "";
 
  const {data:profile,error} = await db
   .from("profiles")
@@ -221,27 +510,41 @@ async function showApp(session){
   .eq("id",session.user.id)
   .single();
 
- if(error || !profile || profile.system_role !== "super_admin"){
+ if(error || !profile ||
+    profile.system_role !== "super_admin"){
+
   await db.auth.signOut();
+
   $("app").classList.add("hidden");
   $("login").classList.remove("hidden");
-  showError("এই অ্যাকাউন্টে Super Admin অনুমতি নেই।");
+
+  showError(
+   "এই অ্যাকাউন্টে Super Admin অনুমতি নেই।"
+  );
+
   return;
  }
 
- $("adminName").textContent = profile.full_name || "Super Admin";
+ $("adminName").textContent =
+  profile.full_name || "Super Admin";
+
  await loadDashboard();
 }
 
+/* DASHBOARD COUNTS */
+
 async function countRows(table,id){
+
  const {count,error} = await db
   .from(table)
   .select("*",{count:"exact",head:true});
 
- $(id).textContent = error ? "—" : (count ?? 0);
+ $(id).textContent =
+  error ? "—" : (count ?? 0);
 }
 
 async function loadDashboard(){
+
  await Promise.all([
   countRows("hospitals","hospitalCount"),
   countRows("doctors","doctorCount"),
@@ -256,7 +559,8 @@ async function loadDashboard(){
 
  if(error){
   $("hospitalSummary").textContent =
-   "হাসপাতালের তথ্য লোড করা যায়নি: " + error.message;
+   "হাসপাতালের তথ্য লোড করা যায়নি: " +
+   error.message;
   return;
  }
 
@@ -267,16 +571,28 @@ async function loadDashboard(){
  }
 
  $("hospitalSummary").innerHTML =
-  '<table><thead><tr><th>Hospital</th><th>Details</th></tr></thead><tbody>' +
+  '<table><thead><tr>' +
+  '<th>Hospital</th><th>Details</th>' +
+  '</tr></thead><tbody>' +
+
   data.map(h =>
-   '<tr><td>' + escapeHtml(h.name || h.hospital_name || "Unnamed hospital") +
-   '</td><td>' + escapeHtml(h.city || h.address || "—") + '</td></tr>'
+   '<tr><td>' +
+   escapeHtml(h.name || h.hospital_name ||
+   "Unnamed hospital") +
+   '</td><td>' +
+   escapeHtml(h.city || h.address || "—") +
+   '</td></tr>'
   ).join("") +
+
   '</tbody></table>';
 }
 
+/* MODULE DATA */
+
 async function openList(view){
+
  currentView = view;
+
  $("dashboardView").classList.add("hidden");
  $("listView").classList.remove("hidden");
 
@@ -292,9 +608,12 @@ async function openList(view){
  };
 
  const [title,table] = map[view];
+
  $("heading").textContent = title;
  $("listTitle").textContent = title;
- $("records").innerHTML = '<div class="empty">তথ্য লোড হচ্ছে…</div>';
+
+ $("records").innerHTML =
+  '<div class="empty">তথ্য লোড হচ্ছে…</div>';
 
  const {data,error} = await db
   .from(table)
@@ -303,12 +622,13 @@ async function openList(view){
 
  if(error){
   $("records").innerHTML =
-   '<div class="empty">তথ্য পাওয়া যায়নি। ' +
-   escapeHtml(error.message) + '</div>';
+   '<div class="empty">তথ্য পাওয়া যায়নি: ' +
+   escapeHtml(error.message) +
+   '</div>';
   return;
  }
 
- if(!data.length){
+ if(!data || !data.length){
   $("records").innerHTML =
    '<div class="empty">কোনো রেকর্ড পাওয়া যায়নি।</div>';
   return;
@@ -318,76 +638,133 @@ async function openList(view){
 
  $("records").innerHTML =
   '<table><thead><tr>' +
-  keys.map(k => '<th>' + escapeHtml(k) + '</th>').join("") +
-  '</tr></thead><tbody>' +
-  data.map(row =>
-   '<tr>' + keys.map(k =>
-    '<td>' + escapeHtml(row[k]) + '</td>'
-   ).join("") + '</tr>'
+
+  keys.map(k =>
+   '<th>' + escapeHtml(k) + '</th>'
   ).join("") +
+
+  '</tr></thead><tbody>' +
+
+  data.map(row =>
+   '<tr>' +
+   keys.map(k =>
+    '<td>' + escapeHtml(row[k]) + '</td>'
+   ).join("") +
+   '</tr>'
+  ).join("") +
+
   '</tbody></table>';
 }
 
-$("loginForm").addEventListener("submit",async e=>{
- e.preventDefault();
- showError("");
- $("loginBtn").disabled = true;
- $("loginBtn").textContent = "Signing in…";
+/* LOGIN */
 
- const {data,error} = await db.auth.signInWithPassword({
-  email:$("email").value.trim(),
-  password:$("password").value
- });
+$("loginForm").addEventListener(
+ "submit",
+ async e=>{
 
- $("loginBtn").disabled = false;
- $("loginBtn").textContent = "Login";
+  e.preventDefault();
 
- if(error){
-  showError("Login হয়নি: " + error.message);
-  return;
+  showError("");
+
+  $("loginBtn").disabled = true;
+  $("loginBtn").textContent = "Signing in…";
+
+  const {data,error} = await db.auth.signInWithPassword({
+   email:$("email").value.trim(),
+   password:$("password").value
+  });
+
+  $("loginBtn").disabled = false;
+  $("loginBtn").textContent = "Login";
+
+  if(error){
+   showError("Login হয়নি: " + error.message);
+   return;
+  }
+
+  await showApp(data.session);
  }
+);
 
- await showApp(data.session);
-});
+/* LOGOUT */
 
-$("logoutBtn").addEventListener("click",async()=>{
- await db.auth.signOut();
- location.reload();
-});
+$("logoutBtn").addEventListener(
+ "click",
+ async()=>{
+  await db.auth.signOut();
+  location.reload();
+ }
+);
 
-$("menuBtn").addEventListener("click",()=>{
- $("sidebar").classList.toggle("open");
-});
+/* MOBILE MENU */
 
-document.querySelectorAll("[data-view]").forEach(button=>{
+$("menuBtn").addEventListener(
+ "click",
+ ()=>{
+  $("sidebar").classList.toggle("open");
+ }
+);
+
+/* NAVIGATION */
+
+document.querySelectorAll("[data-view]")
+.forEach(button=>{
+
  button.addEventListener("click",async()=>{
-  document.querySelectorAll("[data-view]").forEach(b=>{
+
+  document.querySelectorAll("[data-view]")
+  .forEach(b=>{
    b.classList.toggle("active",b===button);
   });
 
   $("sidebar").classList.remove("open");
 
   if(button.dataset.view==="dashboard"){
+
    currentView = "dashboard";
+
    $("dashboardView").classList.remove("hidden");
    $("listView").classList.add("hidden");
-   $("heading").textContent = "Super Admin Dashboard";
+
+   $("heading").textContent =
+    "Super Admin Dashboard";
+
    await loadDashboard();
+
   }else{
+
    await openList(button.dataset.view);
+
   }
  });
 });
 
-$("refreshBtn").addEventListener("click",()=>{
- if(currentView==="dashboard") loadDashboard();
- else openList(currentView);
-});
+/* REFRESH */
+
+$("refreshBtn").addEventListener(
+ "click",
+ ()=>{
+  if(currentView==="dashboard"){
+   loadDashboard();
+  }else{
+   openList(currentView);
+  }
+ }
+);
+
+/* AUTO LOGIN CHECK */
 
 (async()=>{
+
  const {data} = await db.auth.getSession();
- if(data.session) await showApp(data.session);
+
+ if(data.session){
+  await showApp(data.session);
+ }
+
 })();
+
 </script>
+
 </body>
 </html>

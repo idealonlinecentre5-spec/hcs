@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>HCMS - Super Admin</title>
+<title>Health Care Management System</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box}
@@ -84,16 +84,16 @@ td button{margin:2px}
 <section id="login">
  <div class="login-card">
   <div class="logo">✚ HCMS</div>
-  <h2>Super Admin Login</h2>
-  <p class="muted">Health Care Management System</p>
+  <h2>Admin Login</h2>
+  <p class="muted">Super Admin অথবা Hospital Admin</p>
   <form id="loginForm">
    <div class="field">
     <label>Email Address</label>
-    <input id="email" type="email" required autocomplete="username" placeholder="Admin Email">
+    <input id="email" type="email" required autocomplete="username" placeholder="আপনার Email">
    </div>
    <div class="field">
     <label>Password</label>
-    <input id="password" type="password" required autocomplete="current-password" placeholder="Password">
+    <input id="password" type="password" required autocomplete="current-password" placeholder="আপনার Password">
    </div>
    <div id="error"></div>
    <button class="primary wide" id="loginBtn">Login</button>
@@ -105,31 +105,47 @@ td button{margin:2px}
 <div id="app" class="hidden">
  <aside class="sidebar" id="sidebar">
   <div class="brand">✚ HCMS<small>Health Care Management System</small></div>
-  <div class="nav-label">MAIN MENU</div>
-  <nav class="nav">
-   <button data-view="dashboard" class="active">▦ Dashboard</button>
-   <button data-view="hospitals">🏥 Hospital Management</button>
-   <button data-view="approvals">✓ Hospital Approval</button>
-   <button data-view="doctors">👨‍⚕️ Doctors</button>
-   <button data-view="patients">🧑 Patients</button>
-   <button data-view="appointments">📅 Appointments</button>
-  </nav>
-  <div class="nav-label">ADMINISTRATION</div>
-  <nav class="nav"><button data-view="users">♙ User Management</button></nav>
-  <div class="nav-label">ACCOUNT</div>
-  <nav class="nav"><button id="logoutBtn">⇥ Logout</button></nav>
+
+  <div id="superAdminNav">
+   <div class="nav-label">SUPER ADMIN MENU</div>
+   <nav class="nav">
+    <button data-view="dashboard" class="active">▦ Dashboard</button>
+    <button data-view="hospitals">🏥 Hospital Management</button>
+    <button data-view="approvals">✓ Hospital Approval</button>
+    <button data-view="doctors">👨‍⚕️ Doctors</button>
+    <button data-view="patients">🧑 Patients</button>
+    <button data-view="appointments">📅 Appointments</button>
+    <button data-view="users">♙ User Management</button>
+   </nav>
+   <div class="nav-label">ACCOUNT</div>
+   <nav class="nav"><button id="logoutBtn">⇥ Logout</button></nav>
+  </div>
+
+  <div id="hospitalAdminNav" class="hidden">
+   <div class="nav-label">HOSPITAL MENU</div>
+   <nav class="nav">
+    <button data-hospital-view="dashboard" class="active">▦ Dashboard</button>
+    <button data-hospital-view="doctors">👨‍⚕️ Doctors</button>
+    <button data-hospital-view="patients">🧑 Patients</button>
+    <button data-hospital-view="appointments">📅 Appointments</button>
+    <button data-hospital-view="members">♙ Hospital Users</button>
+   </nav>
+   <div class="nav-label">ACCOUNT</div>
+   <nav class="nav"><button id="hospitalLogoutBtn">⇥ Logout</button></nav>
+  </div>
  </aside>
 
  <div class="main">
   <header class="top">
    <div style="display:flex;align-items:center;gap:12px">
     <button class="menu-btn" id="menuBtn">☰</button>
-    <h1 id="heading">Super Admin Dashboard</h1>
+    <h1 id="heading">Dashboard</h1>
    </div>
-   <div class="user"><b id="adminName">Super Admin</b><br><span id="adminEmail" class="muted"></span></div>
+   <div class="user"><b id="adminName">Admin</b><br><span id="adminEmail" class="muted"></span></div>
   </header>
 
   <main class="content">
+
    <section id="dashboardView">
     <div class="welcome">
      <h2>Welcome to HCMS</h2>
@@ -147,6 +163,24 @@ td button{margin:2px}
     </div>
    </section>
 
+   <section id="hospitalDashboardView" class="hidden">
+    <div class="welcome">
+     <h2 id="hospitalWelcome">Hospital Dashboard</h2>
+     <div>আপনার হাসপাতালের ব্যবস্থাপনা</div>
+    </div>
+    <div class="cards">
+     <div class="card"><span class="symbol">👨‍⚕️</span><div class="label">Doctors</div><strong id="haDoctorCount">—</strong></div>
+     <div class="card"><span class="symbol">🧑‍🤝‍🧑</span><div class="label">Patients</div><strong id="haPatientCount">—</strong></div>
+     <div class="card"><span class="symbol">📅</span><div class="label">Appointments</div><strong id="haAppointmentCount">—</strong></div>
+     <div class="card"><span class="symbol">👥</span><div class="label">Hospital Users</div><strong id="haMemberCount">—</strong></div>
+    </div>
+    <div class="panel" style="margin-top:17px">
+     <h3>Hospital Information</h3>
+     <div id="hospitalInfo" class="muted">তথ্য লোড হচ্ছে…</div>
+    </div>
+    <p class="note" style="margin-top:15px">আপনি শুধু আপনার নিজের হাসপাতালের তথ্য পরিচালনা করতে পারবেন।</p>
+   </section>
+
    <section id="listView" class="hidden">
     <div class="panel">
      <div class="toolbar">
@@ -162,7 +196,6 @@ td button{margin:2px}
      <h3 id="hospitalFormTitle">নতুন হাসপাতাল ও Admin নিবন্ধন</h3>
      <form id="hospitalForm">
       <input type="hidden" id="hospitalId">
-
       <div class="section-title">🏥 হাসপাতালের তথ্য</div>
       <div class="form-grid">
        <div class="field"><label>হাসপাতালের নাম *</label><input id="hName" required maxlength="150"></div>
@@ -182,24 +215,27 @@ td button{margin:2px}
 
       <div id="adminFields">
        <div class="section-title">👤 Hospital Admin Account</div>
-       <div class="note">এই তথ্য দিয়ে হাসপাতালের Admin Login Account তৈরি হবে। পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের দিন।</div>
+       <div class="note">এই তথ্য দিয়ে হাসপাতালের Admin Login Account তৈরি হবে। Password কমপক্ষে ৮ অক্ষরের দিন।</div>
        <div class="field"><label>Admin-এর পূর্ণ নাম *</label><input id="aName" required autocomplete="off"></div>
        <div class="field"><label>Admin Login Email *</label><input id="aEmail" type="email" required autocomplete="off"></div>
        <div class="field"><label>Admin Password *</label><input id="aPassword" type="password" minlength="8" required autocomplete="new-password"></div>
       </div>
 
-      <div id="editNote" class="note hidden">এটি হাসপাতালের তথ্য সম্পাদনার ফর্ম। Admin তৈরি করতে হাসপাতালের তালিকার Create Admin বাটন ব্যবহার করুন।</div>
+      <div id="editNote" class="note hidden">এটি হাসপাতালের তথ্য সম্পাদনার ফর্ম।</div>
       <button class="primary" type="submit" id="saveHospitalBtn">🏥 হাসপাতাল ও Admin তৈরি করুন</button>
       <button class="secondary" type="button" id="cancelHospitalBtn">Cancel</button>
      </form>
     </div>
    </section>
+
   </main>
  </div>
 </div>
+
 <div id="toast"></div>
 
 <script>
+/* SUPABASE CONFIG */
 const SUPABASE_URL="https://zagmebjlyswokvwbnplm.supabase.co";
 const SUPABASE_ANON_KEY="sb_publishable_j67EP3xe1m7vMQmtWvSvQg_1wq9IKiZ";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
@@ -208,12 +244,16 @@ const $=id=>document.getElementById(id);
 let activeSession=null;
 let currentView="dashboard";
 let hospitalCache=[];
+let currentRole=null;
+let currentHospitalId=null;
+let currentHospital=null;
 
 function escapeHtml(value){
  return String(value??"").replace(/[&<>"']/g,c=>({
   "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
  }[c]));
 }
+
 function notify(message){
  $("toast").textContent=message;
  $("toast").style.display="block";
@@ -221,42 +261,111 @@ function notify(message){
 }
 function showError(message){$("error").textContent=message;}
 
+/* ROLE BASED LOGIN */
 async function showApp(session){
  activeSession=session;
- $("login").classList.add("hidden");
- $("app").classList.remove("hidden");
- $("adminEmail").textContent=session.user.email||"";
 
  const {data:profile,error}=await db.from("profiles")
   .select("full_name,system_role")
-  .eq("id",session.user.id).single();
+  .eq("id",session.user.id).maybeSingle();
 
- if(error||!profile||profile.system_role!=="super_admin"){
+ if(error){
+  await db.auth.signOut();
+  activeSession=null;
+  showError("প্রোফাইল যাচাই করা যায়নি: "+error.message);
+  return;
+ }
+
+ if(profile?.system_role==="super_admin"){
+  currentRole="super_admin";
+  currentHospitalId=null;
+  currentHospital=null;
+
+  $("login").classList.add("hidden");
+  $("app").classList.remove("hidden");
+  $("superAdminNav").classList.remove("hidden");
+  $("hospitalAdminNav").classList.add("hidden");
+  $("adminName").textContent=profile.full_name||"Super Admin";
+  $("adminEmail").textContent=session.user.email||"";
+  $("heading").textContent="Super Admin Dashboard";
+
+  await showSuperDashboard();
+  return;
+ }
+
+ const {data:membership,error:memberError}=await db.from("hospital_members")
+  .select("hospital_id,role,status")
+  .eq("user_id",session.user.id)
+  .eq("status","active")
+  .eq("role","hospital_admin")
+  .maybeSingle();
+
+ if(memberError||!membership){
   await db.auth.signOut();
   activeSession=null;
   $("app").classList.add("hidden");
   $("login").classList.remove("hidden");
-  showError("এই অ্যাকাউন্টে Super Admin অনুমতি নেই।");
+  showError("এই অ্যাকাউন্টে Active Super Admin অথবা Hospital Admin অনুমতি নেই।");
   return;
  }
- $("adminName").textContent=profile.full_name||"Super Admin";
- await loadDashboard();
+
+ currentRole="hospital_admin";
+ currentHospitalId=membership.hospital_id;
+
+ const {data:hospital,error:hospitalError}=await db.from("hospitals")
+  .select("id,name,slug,phone,email,address,status")
+  .eq("id",currentHospitalId)
+  .maybeSingle();
+
+ if(hospitalError||!hospital||hospital.status!=="active"){
+  await db.auth.signOut();
+  activeSession=null;
+  $("app").classList.add("hidden");
+  $("login").classList.remove("hidden");
+  showError("আপনার হাসপাতালটি পাওয়া যায়নি অথবা Active নয়।");
+  return;
+ }
+
+ currentHospital=hospital;
+ $("login").classList.add("hidden");
+ $("app").classList.remove("hidden");
+ $("superAdminNav").classList.add("hidden");
+ $("hospitalAdminNav").classList.remove("hidden");
+ $("adminName").textContent=profile?.full_name||"Hospital Admin";
+ $("adminEmail").textContent=session.user.email||"";
+ $("heading").textContent=hospital.name+" - Dashboard";
+
+ document.querySelectorAll("[data-view]").forEach(b=>b.classList.remove("active"));
+ document.querySelectorAll("[data-hospital-view]").forEach(b=>{
+  b.classList.toggle("active",b.dataset.hospitalView==="dashboard");
+ });
+
+ await showHospitalDashboard();
 }
 
+/* COUNTS */
 async function countRows(table,id){
  const {count,error}=await db.from(table).select("*",{count:"exact",head:true});
  $(id).textContent=error?"—":(count??0);
 }
-async function loadDashboard(){
+
+async function showSuperDashboard(){
+ $("dashboardView").classList.remove("hidden");
+ $("hospitalDashboardView").classList.add("hidden");
+ $("listView").classList.add("hidden");
+ $("hospitalFormView").classList.add("hidden");
+
  await Promise.all([
   countRows("hospitals","hospitalCount"),
   countRows("doctors","doctorCount"),
   countRows("patients","patientCount"),
   countRows("appointments","appointmentCount")
  ]);
+
  const {data,error}=await db.from("hospitals")
   .select("id,name,address,status,created_at")
   .order("created_at",{ascending:false}).limit(5);
+
  if(error){
   $("hospitalSummary").textContent="তথ্য লোড হয়নি: "+error.message;
   return;
@@ -265,22 +374,62 @@ async function loadDashboard(){
   $("hospitalSummary").textContent="এখনো কোনো হাসপাতাল নেই।";
   return;
  }
+
  $("hospitalSummary").innerHTML=
   '<div class="table-wrap"><table><thead><tr><th>Hospital</th><th>Status</th></tr></thead><tbody>'+
   data.map(h=>`<tr><td>${escapeHtml(h.name)}</td><td><span class="status ${escapeHtml(h.status)}">${escapeHtml(h.status)}</span></td></tr>`).join("")+
   '</tbody></table></div>';
 }
 
-function showView(view){
- currentView=view;
- $("dashboardView").classList.toggle("hidden",view!=="dashboard");
- $("listView").classList.toggle("hidden",view==="dashboard");
+async function showHospitalDashboard(){
+ $("dashboardView").classList.add("hidden");
+ $("hospitalDashboardView").classList.remove("hidden");
+ $("listView").classList.add("hidden");
  $("hospitalFormView").classList.add("hidden");
- $("heading").textContent=view==="dashboard"?"Super Admin Dashboard":view==="hospitals"?"Hospital Management":view==="approvals"?"Hospital Approval":view.charAt(0).toUpperCase()+view.slice(1);
- if(view==="dashboard")loadDashboard();
- else openList(view);
+
+ $("hospitalWelcome").textContent=currentHospital?.name||"Hospital Dashboard";
+
+ $("hospitalInfo").innerHTML=
+  `<b>${escapeHtml(currentHospital?.name)}</b><br>
+   ঠিকানা: ${escapeHtml(currentHospital?.address||"—")}<br>
+   ফোন: ${escapeHtml(currentHospital?.phone||"—")}<br>
+   ইমেইল: ${escapeHtml(currentHospital?.email||"—")}<br>
+   Status: ${escapeHtml(currentHospital?.status||"—")}`;
+
+ const scopedCount=async(table,id)=>{
+  const {count,error}=await db.from(table)
+   .select("id",{count:"exact",head:true})
+   .eq("hospital_id",currentHospitalId);
+  $(id).textContent=error?"—":(count??0);
+ };
+
+ await Promise.all([
+  scopedCount("doctors","haDoctorCount"),
+  scopedCount("patients","haPatientCount"),
+  scopedCount("appointments","haAppointmentCount"),
+  scopedCount("hospital_members","haMemberCount")
+ ]);
 }
 
+/* SUPER ADMIN NAVIGATION */
+function showView(view){
+ if(currentRole!=="super_admin")return;
+
+ currentView=view;
+ $("dashboardView").classList.toggle("hidden",view!=="dashboard");
+ $("hospitalDashboardView").classList.add("hidden");
+ $("listView").classList.toggle("hidden",view==="dashboard");
+ $("hospitalFormView").classList.add("hidden");
+
+ if(view==="dashboard"){
+  $("heading").textContent="Super Admin Dashboard";
+  showSuperDashboard();
+ }else{
+  openList(view);
+ }
+}
+
+/* DATA LISTS */
 async function openList(view){
  const map={
   hospitals:["Hospital Management","hospitals"],
@@ -288,35 +437,59 @@ async function openList(view){
   doctors:["Doctors","doctors"],
   patients:["Patients","patients"],
   appointments:["Appointments","appointments"],
-  users:["User Management","profiles"]
+  users:["User Management","profiles"],
+  members:["Hospital Users","hospital_members"]
  };
+
  const [title,table]=map[view]||map.hospitals;
  $("heading").textContent=title;
  $("listTitle").textContent=title;
  $("records").innerHTML='<div class="empty">তথ্য লোড হচ্ছে…</div>';
 
  let query=db.from(table).select("*");
+
+ if(currentRole==="hospital_admin"){
+  if(!currentHospitalId)return;
+  if(["doctors","patients","appointments"].includes(view)){
+   query=query.eq("hospital_id",currentHospitalId);
+  }else if(view==="members"){
+   query=query.eq("hospital_id",currentHospitalId);
+  }else{
+   $("records").innerHTML='<div class="empty">এই পেজে প্রবেশের অনুমতি নেই।</div>';
+   return;
+  }
+ }
+
  if(view==="approvals")query=query.eq("status","pending");
+
  const {data,error}=await query.order("created_at",{ascending:false}).limit(100);
 
  if(error){
   $("records").innerHTML='<div class="empty">সমস্যা: '+escapeHtml(error.message)+'</div>';
   return;
  }
+
  if(!data?.length){
   $("records").innerHTML='<div class="empty">কোনো রেকর্ড পাওয়া যায়নি।</div>';
-  if(view==="hospitals")$("records").innerHTML+='<div style="text-align:center"><button class="primary" onclick="newHospital()">+ নতুন হাসপাতাল</button></div>';
+  if(view==="hospitals"){
+   $("records").innerHTML+='<div style="text-align:center"><button class="primary" onclick="newHospital()">+ নতুন হাসপাতাল</button></div>';
+  }
   return;
  }
+
  if(view==="hospitals"||view==="approvals"){
   hospitalCache=data;
   renderHospitals(data,view);
   return;
  }
+
  const keys=Object.keys(data[0]).slice(0,7);
- $("records").innerHTML='<div class="table-wrap"><table><thead><tr>'+keys.map(k=>'<th>'+escapeHtml(k)+'</th>').join("")+'</tr></thead><tbody>'+
- data.map(row=>'<tr>'+keys.map(k=>'<td>'+escapeHtml(row[k])+'</td>').join("")+'</tr>').join("")+
- '</tbody></table></div>';
+ $("records").innerHTML=
+  '<div class="table-wrap"><table><thead><tr>'+
+  keys.map(k=>'<th>'+escapeHtml(k)+'</th>').join("")+
+  '</tr></thead><tbody>'+
+  data.map(row=>'<tr>'+keys.map(k=>'<td>'+escapeHtml(row[k])+'</td>').join("")+'</tr>').join("")+
+  '</tbody></table></div>';
 }
 
 function renderHospitals(data,view){
@@ -340,32 +513,40 @@ function renderHospitals(data,view){
       <button class="primary" onclick="createAdminForExisting(${i})">Create Admin</button>
       ${h.status!=="active"?`<button class="success" onclick="changeHospitalStatus(${i},'active')">Activate</button>`:""}
       ${h.status!=="suspended"?`<button class="danger" onclick="changeHospitalStatus(${i},'suspended')">Suspend</button>`:""}
-      <button class="danger" onclick="deleteHospital(${i})">Delete</button>
      </td>
     </tr>`).join("")}
    </tbody>
   </table></div>`;
 }
 
+/* HOSPITAL FORM */
 function newHospital(){
+ if(currentRole!=="super_admin")return;
+
  $("dashboardView").classList.add("hidden");
+ $("hospitalDashboardView").classList.add("hidden");
  $("listView").classList.add("hidden");
  $("hospitalFormView").classList.remove("hidden");
+
  $("hospitalForm").reset();
  $("hospitalId").value="";
  $("hStatus").value="active";
  $("adminFields").classList.remove("hidden");
  $("editNote").classList.add("hidden");
+
  $("aName").required=true;
  $("aEmail").required=true;
  $("aPassword").required=true;
+
  $("hospitalFormTitle").textContent="নতুন হাসপাতাল ও Admin নিবন্ধন";
  $("saveHospitalBtn").textContent="🏥 হাসপাতাল ও Admin তৈরি করুন";
  $("heading").textContent="Hospital Registration";
 }
+
 function editHospital(index){
  const h=hospitalCache[index];
  if(!h)return;
+
  newHospital();
  $("hospitalId").value=h.id;
  $("hName").value=h.name||"";
@@ -374,11 +555,13 @@ function editHospital(index){
  $("hEmail").value=h.email||"";
  $("hAddress").value=h.address||"";
  $("hStatus").value=h.status||"pending";
+
  $("adminFields").classList.add("hidden");
  $("editNote").classList.remove("hidden");
  $("aName").required=false;
  $("aEmail").required=false;
  $("aPassword").required=false;
+
  $("hospitalFormTitle").textContent="হাসপাতালের তথ্য সম্পাদনা";
  $("saveHospitalBtn").textContent="তথ্য আপডেট করুন";
  $("heading").textContent="Edit Hospital";
@@ -390,11 +573,16 @@ $("hName").addEventListener("input",()=>{
    .replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
  }
 });
+
 $("cancelHospitalBtn").addEventListener("click",()=>showView("hospitals"));
 
+/* CREATE HOSPITAL ADMIN USING EDGE FUNCTION */
 async function callCreateAdmin(hospitalId,fullName,email,password){
  const {data:{session},error:sessionError}=await db.auth.getSession();
- if(sessionError||!session)throw new Error("আপনার Login Session পাওয়া যায়নি। আবার Login করুন।");
+
+ if(sessionError||!session){
+  throw new Error("আপনার Login Session পাওয়া যায়নি। আবার Login করুন।");
+ }
 
  const {data,error}=await db.functions.invoke("create-hospital-admin",{
   body:{
@@ -407,14 +595,21 @@ async function callCreateAdmin(hospitalId,fullName,email,password){
    Authorization:"Bearer "+session.access_token
   }
  });
+
  if(error)throw new Error(error.message||"Admin তৈরি করা যায়নি");
- if(!data||!data.success)throw new Error(data?.error||"Admin তৈরি হয়নি");
+ if(!data||!data.success){
+  throw new Error(data?.error||"Admin তৈরি হয়নি");
+ }
  return data;
 }
 
 $("hospitalForm").addEventListener("submit",async e=>{
  e.preventDefault();
- if(!activeSession){alert("আবার Login করুন।");return;}
+
+ if(currentRole!=="super_admin"||!activeSession){
+  alert("Super Admin Login প্রয়োজন।");
+  return;
+ }
 
  const id=$("hospitalId").value;
  const hospital={
@@ -425,7 +620,11 @@ $("hospitalForm").addEventListener("submit",async e=>{
   address:$("hAddress").value.trim()||null,
   status:$("hStatus").value
  };
- if(!hospital.name||!hospital.slug){alert("হাসপাতালের নাম ও Slug লিখুন।");return;}
+
+ if(!hospital.name||!hospital.slug){
+  alert("হাসপাতালের নাম ও Slug লিখুন।");
+  return;
+ }
 
  const isNew=!id;
  const fullName=$("aName").value.trim();
@@ -434,13 +633,16 @@ $("hospitalForm").addEventListener("submit",async e=>{
 
  if(isNew){
   if(!fullName||!adminEmail||!adminPassword){
-   alert("Admin-এর নাম, Email ও Password দিন।");return;
+   alert("Admin-এর নাম, Email ও Password দিন।");
+   return;
   }
   if(adminPassword.length<8){
-   alert("Admin Password কমপক্ষে ৮ অক্ষরের হতে হবে।");return;
+   alert("Admin Password কমপক্ষে ৮ অক্ষরের হতে হবে।");
+   return;
   }
   if(hospital.status!=="active"){
-   alert("Admin তৈরি করতে হাসপাতালের Status Active রাখুন।");return;
+   alert("Admin তৈরি করতে হাসপাতালের Status Active রাখুন।");
+   return;
   }
  }
 
@@ -448,53 +650,74 @@ $("hospitalForm").addEventListener("submit",async e=>{
  $("saveHospitalBtn").textContent="অপেক্ষা করুন...";
 
  try{
-  let hospitalId=id;
-
   if(isNew){
    hospital.created_by=activeSession.user.id;
+
    const {data,error}=await db.from("hospitals")
     .insert(hospital).select("id").single();
+
    if(error)throw new Error("হাসপাতাল তৈরি হয়নি: "+error.message);
-   hospitalId=data.id;
 
    try{
-    await callCreateAdmin(hospitalId,fullName,adminEmail,adminPassword);
+    await callCreateAdmin(data.id,fullName,adminEmail,adminPassword);
    }catch(adminError){
-    throw new Error("হাসপাতাল তৈরি হয়েছে, কিন্তু Admin তৈরি হয়নি। হাসপাতালের তালিকা থেকে Create Admin চাপ দিয়ে আবার চেষ্টা করুন। কারণ: "+adminError.message);
+    throw new Error(
+     "হাসপাতাল তৈরি হয়েছে, কিন্তু Admin তৈরি হয়নি। হাসপাতালের তালিকা থেকে Create Admin চাপ দিয়ে আবার চেষ্টা করুন। কারণ: "+
+     adminError.message
+    );
    }
-   notify("হাসপাতাল ও Hospital Admin সফলভাবে তৈরি হয়েছে!");
-   alert("সফল!\nহাসপাতাল: "+hospital.name+"\nAdmin Email: "+adminEmail+"\nAdmin Account তৈরি হয়েছে।");
+
+   alert(
+    "সফল!\nহাসপাতাল: "+hospital.name+
+    "\nAdmin Email: "+adminEmail+
+    "\nHospital Admin Account তৈরি হয়েছে।"
+   );
+   notify("হাসপাতাল ও Admin সফলভাবে তৈরি হয়েছে!");
   }else{
-   const {error}=await db.from("hospitals").update(hospital).eq("id",id);
+   const {error}=await db.from("hospitals")
+    .update(hospital).eq("id",id);
+
    if(error)throw new Error("আপডেট হয়নি: "+error.message);
    notify("হাসপাতালের তথ্য আপডেট হয়েছে।");
   }
+
   showView("hospitals");
+
  }catch(error){
   alert(error.message||String(error));
  }finally{
   $("saveHospitalBtn").disabled=false;
-  $("saveHospitalBtn").textContent=isNew?"🏥 হাসপাতাল ও Admin তৈরি করুন":"তথ্য আপডেট করুন";
+  $("saveHospitalBtn").textContent=isNew?
+   "🏥 হাসপাতাল ও Admin তৈরি করুন":"তথ্য আপডেট করুন";
  }
 });
 
-/* Existing hospital: create its admin */
+/* CREATE ADMIN FOR EXISTING HOSPITAL */
 async function createAdminForExisting(index){
  const h=hospitalCache[index];
  if(!h)return;
+
  if(h.status!=="active"){
-  alert("প্রথমে হাসপাতালটি Active করুন।");return;
+  alert("প্রথমে হাসপাতালটি Active করুন।");
+  return;
  }
+
  const fullName=prompt("Hospital Admin-এর পূর্ণ নাম লিখুন:");
  if(!fullName)return;
+
  const email=prompt("Admin Login Email লিখুন:");
  if(!email)return;
+
  const password=prompt("Admin Password লিখুন (কমপক্ষে ৮ অক্ষর):");
  if(!password)return;
+
  if(password.length<8){
-  alert("Password কমপক্ষে ৮ অক্ষরের হতে হবে।");return;
+  alert("Password কমপক্ষে ৮ অক্ষরের হতে হবে।");
+  return;
  }
+
  if(!confirm(h.name+" হাসপাতালের জন্য Admin তৈরি করবেন?"))return;
+
  try{
   await callCreateAdmin(h.id,fullName.trim(),email.trim().toLowerCase(),password);
   alert("Hospital Admin সফলভাবে তৈরি হয়েছে!\nEmail: "+email);
@@ -504,25 +727,23 @@ async function createAdminForExisting(index){
  }
 }
 
-/* STATUS / DELETE */
+/* HOSPITAL STATUS */
 async function changeHospitalStatus(index,status){
  const h=hospitalCache[index];
  if(!h)return;
+
  if(!confirm(h.name+" হাসপাতালের Status "+status+" করতে চান?"))return;
- const {error}=await db.from("hospitals").update({status}).eq("id",h.id);
- if(error){alert("সমস্যা: "+error.message);return;}
+
+ const {error}=await db.from("hospitals")
+  .update({status}).eq("id",h.id);
+
+ if(error){
+  alert("সমস্যা: "+error.message);
+  return;
+ }
+
  notify("Hospital status updated.");
- await loadDashboard();
- await openList(currentView);
-}
-async function deleteHospital(index){
- const h=hospitalCache[index];
- if(!h)return;
- if(!confirm("এই হাসপাতালটি স্থায়ীভাবে মুছে ফেলতে চান?"))return;
- const {error}=await db.from("hospitals").delete().eq("id",h.id);
- if(error){alert("মুছে ফেলা যায়নি: "+error.message);return;}
- notify("Hospital deleted.");
- await loadDashboard();
+ await showSuperDashboard();
  await openList(currentView);
 }
 
@@ -530,37 +751,94 @@ async function deleteHospital(index){
 $("loginForm").addEventListener("submit",async e=>{
  e.preventDefault();
  showError("");
+
  $("loginBtn").disabled=true;
  $("loginBtn").textContent="Signing in...";
+
  const {data,error}=await db.auth.signInWithPassword({
   email:$("email").value.trim(),
   password:$("password").value
  });
+
  $("loginBtn").disabled=false;
  $("loginBtn").textContent="Login";
- if(error){showError("Login হয়নি: "+error.message);return;}
+
+ if(error){
+  showError("Login হয়নি: "+error.message);
+  return;
+ }
+
  await showApp(data.session);
 });
 
-$("logoutBtn").addEventListener("click",async()=>{
+/* LOGOUT */
+async function logout(){
  await db.auth.signOut();
  activeSession=null;
+ currentRole=null;
+ currentHospitalId=null;
+ currentHospital=null;
  location.reload();
-});
+}
+$("logoutBtn").addEventListener("click",logout);
+$("hospitalLogoutBtn").addEventListener("click",logout);
 
+/* SUPER ADMIN MENU */
 document.querySelectorAll("[data-view]").forEach(button=>{
  button.addEventListener("click",()=>{
-  document.querySelectorAll("[data-view]").forEach(b=>b.classList.toggle("active",b===button));
+  document.querySelectorAll("[data-view]").forEach(b=>{
+   b.classList.toggle("active",b===button);
+  });
   $("sidebar").classList.remove("open");
   showView(button.dataset.view);
  });
 });
-$("menuBtn").addEventListener("click",()=>$("sidebar").classList.toggle("open"));
-$("refreshBtn").addEventListener("click",()=>showView(currentView));
 
+/* HOSPITAL ADMIN MENU */
+document.querySelectorAll("[data-hospital-view]").forEach(button=>{
+ button.addEventListener("click",()=>{
+  if(currentRole!=="hospital_admin")return;
+
+  document.querySelectorAll("[data-hospital-view]").forEach(b=>{
+   b.classList.toggle("active",b===button);
+  });
+
+  $("sidebar").classList.remove("open");
+
+  const view=button.dataset.hospitalView;
+
+  if(view==="dashboard"){
+   $("heading").textContent=(currentHospital?.name||"Hospital")+" - Dashboard";
+   showHospitalDashboard();
+  }else{
+   $("hospitalDashboardView").classList.add("hidden");
+   $("dashboardView").classList.add("hidden");
+   $("listView").classList.remove("hidden");
+   $("hospitalFormView").classList.add("hidden");
+   currentView=view;
+   openList(view);
+  }
+ });
+});
+
+$("menuBtn").addEventListener("click",()=>{
+ $("sidebar").classList.toggle("open");
+});
+
+$("refreshBtn").addEventListener("click",()=>{
+ if(currentRole==="super_admin")showView(currentView);
+ else if(currentRole==="hospital_admin"){
+  if(currentView==="dashboard")showHospitalDashboard();
+  else openList(currentView);
+ }
+});
+
+/* RESTORE SESSION */
 (async()=>{
- const {data}=await db.auth.getSession();
- if(data.session)await showApp(data.session);
+ const {data,error}=await db.auth.getSession();
+ if(!error&&data.session){
+  await showApp(data.session);
+ }
 })();
 </script>
 </body>

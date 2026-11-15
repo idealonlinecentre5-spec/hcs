@@ -4,767 +4,463 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#102b50">
-<title>HCMS | Super Admin Dashboard</title>
-
+<title>HCMS - Super Admin</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
-:root{
- --navy:#102b50;
- --blue:#1264d8;
- --bg:#f3f6fc;
- --muted:#718096;
- --line:#e6ebf2;
-}
 *{box-sizing:border-box}
-body{
- margin:0;
- font-family:Arial,sans-serif;
- background:var(--bg);
- color:#182943;
-}
+body{margin:0;font-family:Arial,sans-serif;background:#f2f5fa;color:#182943}
 button,input{font:inherit}
 button{cursor:pointer}
 .hidden{display:none!important}
-
-/* LOGIN */
-#login{
- min-height:100vh;
- display:grid;
- place-items:center;
- padding:20px;
- background:linear-gradient(135deg,#102b50,#1766bd);
-}
-.login-card{
- background:white;
- width:min(420px,100%);
- padding:30px;
- border-radius:18px;
- box-shadow:0 20px 60px #071c3b55;
-}
-.logo{
- font-size:27px;
- font-weight:bold;
- color:var(--blue);
-}
-.muted{color:var(--muted);font-size:14px}
-.field{margin:16px 0}
-.field label{
- display:block;
- font-size:13px;
- margin-bottom:7px;
- font-weight:bold;
-}
-.field input{
- width:100%;
- padding:13px;
- border:1px solid #d9e1ec;
- border-radius:9px;
-}
-.primary{
- background:var(--blue);
- color:white;
- border:0;
- border-radius:9px;
- padding:12px 16px;
- font-weight:bold;
-}
+:root{--navy:#102b50;--blue:#1769d2;--line:#e4eaf2}
+#login{min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(135deg,#102b50,#1766bd)}
+.login-card{background:white;width:min(420px,100%);padding:30px;border-radius:18px;box-shadow:0 20px 60px #071c3b55}
+.logo{font-size:27px;font-weight:bold;color:var(--blue)}
+.field{margin:15px 0}
+.field label{display:block;font-size:13px;font-weight:bold;margin-bottom:7px}
+.field input{width:100%;padding:12px;border:1px solid #d9e1ec;border-radius:8px}
+.primary{background:var(--blue);color:white;border:0;border-radius:8px;padding:11px 15px;font-weight:bold}
+.secondary{background:#e9eff8;color:#18395f;border:0;border-radius:8px;padding:10px 13px}
+.danger{background:#fee8e8;color:#b42318;border:0;border-radius:7px;padding:8px 10px}
+.success{background:#e2f7eb;color:#087443;border:0;border-radius:7px;padding:8px 10px}
 .wide{width:100%}
-#error{
- color:#c62828;
- font-size:13px;
- min-height:20px;
-}
-
-/* SIDEBAR */
-.sidebar{
- position:fixed;
- inset:0 auto 0 0;
- width:250px;
- background:var(--navy);
- color:white;
- padding:22px 14px;
- overflow:auto;
- z-index:5;
-}
-.brand{
- font-size:23px;
- font-weight:bold;
- padding:5px 10px 25px;
-}
-.brand small{
- display:block;
- font-size:12px;
- font-weight:normal;
- color:#bdcde0;
-}
-.nav-label{
- font-size:11px;
- color:#9db1ca;
- padding:15px 10px 7px;
-}
-.nav button{
- display:block;
- width:100%;
- border:0;
- background:transparent;
- color:#e4edf8;
- text-align:left;
- padding:12px;
- border-radius:9px;
- margin:3px 0;
-}
-.nav button.active,
-.nav button:hover{
- background:#1765ca;
-}
-
-/* MAIN */
-.main{
- margin-left:250px;
- min-width:0;
-}
-.top{
- height:76px;
- background:white;
- border-bottom:1px solid var(--line);
- display:flex;
- align-items:center;
- justify-content:space-between;
- padding:0 28px;
- position:sticky;
- top:0;
- z-index:3;
-}
-.top h1{font-size:20px;margin:0}
+#error{color:#c62828;font-size:13px;min-height:20px}
+.sidebar{position:fixed;inset:0 auto 0 0;width:245px;background:var(--navy);color:white;padding:22px 14px;overflow:auto;z-index:5}
+.brand{font-size:23px;font-weight:bold;padding:5px 10px 25px}
+.brand small{display:block;font-size:12px;font-weight:normal;color:#bdcde0;margin-top:5px}
+.nav-label{font-size:11px;color:#9db1ca;padding:15px 10px 7px}
+.nav button{display:block;width:100%;border:0;background:transparent;color:#e4edf8;text-align:left;padding:12px;border-radius:9px;margin:3px 0}
+.nav button.active,.nav button:hover{background:#1765ca}
+.main{margin-left:245px;min-width:0}
+.top{height:72px;background:white;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 25px;position:sticky;top:0;z-index:3}
+.top h1{font-size:19px;margin:0}
 .user{font-size:13px;text-align:right}
-.content{
- padding:26px;
- max-width:1500px;
- margin:auto;
-}
-.welcome{
- background:linear-gradient(110deg,#1059b7,#1686d9);
- color:white;
- border-radius:16px;
- padding:24px;
- margin-bottom:20px;
-}
-.welcome h2{margin:0 0 5px}
-.cards{
- display:grid;
- grid-template-columns:repeat(4,minmax(0,1fr));
- gap:15px;
-}
-.card,.panel{
- background:white;
- border:1px solid var(--line);
- border-radius:14px;
- padding:19px;
- box-shadow:0 4px 16px #18345a08;
-}
-.card .label{
- color:var(--muted);
- font-size:13px;
-}
-.card strong{
- display:block;
- font-size:29px;
- margin-top:8px;
- color:#142e52;
-}
-.card .symbol{
- float:right;
- font-size:24px;
-}
-.grid{
- display:grid;
- grid-template-columns:1.3fr 1fr;
- gap:16px;
- margin-top:18px;
-}
-.panel h3{
- margin:0 0 15px;
- font-size:16px;
-}
-table{
- width:100%;
- border-collapse:collapse;
- min-width:500px;
-}
-th,td{
- text-align:left;
- padding:12px 10px;
- border-bottom:1px solid var(--line);
- font-size:13px;
-}
-th{color:var(--muted)}
+.content{padding:24px;max-width:1450px;margin:auto}
+.welcome{background:linear-gradient(110deg,#1059b7,#1686d9);color:white;border-radius:15px;padding:23px;margin-bottom:18px}
+.welcome h2{margin:0 0 7px}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.card,.panel{background:white;border:1px solid var(--line);border-radius:13px;padding:18px;box-shadow:0 4px 16px #18345a08}
+.card .label{color:#718096;font-size:13px}
+.card strong{display:block;font-size:29px;margin-top:9px}
+.symbol{float:right;font-size:24px}
+.grid{display:grid;grid-template-columns:1.3fr 1fr;gap:15px;margin-top:17px}
+.panel h3{margin:0 0 15px;font-size:16px}
+.muted{color:#718096;font-size:13px}
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:15px}
+.toolbar h3{margin-right:auto}
 .table-wrap{overflow:auto}
-.pill{
- display:inline-block;
- padding:5px 9px;
- border-radius:20px;
- background:#e6f7ef;
- color:#12804c;
- font-size:11px;
-}
-.empty{
- padding:22px;
- text-align:center;
- color:var(--muted);
- font-size:13px;
-}
-.toolbar{
- display:flex;
- gap:10px;
- align-items:center;
- flex-wrap:wrap;
- margin-bottom:15px;
-}
-.menu-btn{
- display:none;
- border:0;
- background:#edf3fb;
- padding:9px;
- border-radius:8px;
-}
-#toast{
- position:fixed;
- bottom:20px;
- right:20px;
- background:#142e52;
- color:white;
- padding:12px 16px;
- border-radius:9px;
- display:none;
- z-index:10;
-}
-
-@media(max-width:1000px){
- .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
- .grid{grid-template-columns:1fr}
-}
+table{width:100%;border-collapse:collapse;min-width:600px}
+th,td{text-align:left;padding:11px 9px;border-bottom:1px solid var(--line);font-size:13px}
+th{color:#718096;background:#f8faff}
+td button{margin:2px}
+.status{display:inline-block;padding:5px 9px;border-radius:20px;font-size:11px;background:#edf1f6;color:#445}
+.status.approved{background:#e2f7eb;color:#087443}
+.status.pending{background:#fff3d8;color:#936000}
+.status.rejected{background:#fee8e8;color:#b42318}
+.empty{text-align:center;padding:25px;color:#718096;font-size:13px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 15px}
+.menu-btn{display:none;border:0;background:#edf3fb;padding:9px;border-radius:8px}
+#toast{position:fixed;bottom:20px;right:20px;background:#142e52;color:white;padding:12px 16px;border-radius:9px;display:none;z-index:20;max-width:90%}
+@media(max-width:950px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.grid{grid-template-columns:1fr}}
 @media(max-width:700px){
- .sidebar{
-  transform:translateX(-100%);
-  transition:.2s;
- }
- .sidebar.open{transform:translateX(0)}
- .main{margin-left:0}
- .menu-btn{display:block}
- .top{padding:0 15px}
- .content{padding:15px}
- .cards{gap:9px}
- .card{padding:14px}
- .card strong{font-size:24px}
- .top h1{font-size:16px}
+.sidebar{transform:translateX(-100%);transition:.2s}
+.sidebar.open{transform:translateX(0)}
+.main{margin-left:0}
+.menu-btn{display:block}
+.top{padding:0 13px}
+.content{padding:13px}
+.cards{gap:9px}
+.card{padding:13px}
+.card strong{font-size:24px}
+.top h1{font-size:15px}
+.form-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
-
 <body>
 
-<!-- LOGIN PAGE -->
 <section id="login">
  <div class="login-card">
   <div class="logo">✚ HCMS</div>
   <h2>Super Admin Login</h2>
   <p class="muted">Health Care Management System</p>
-
   <form id="loginForm">
    <div class="field">
     <label>Email Address</label>
-    <input id="email" type="email"
-     autocomplete="username"
-     required placeholder="Admin Email">
+    <input id="email" type="email" required autocomplete="username" placeholder="Admin Email">
    </div>
-
    <div class="field">
     <label>Password</label>
-    <input id="password" type="password"
-     autocomplete="current-password"
-     required placeholder="Password">
+    <input id="password" type="password" required autocomplete="current-password" placeholder="Password">
    </div>
-
    <div id="error"></div>
-   <button class="primary wide" id="loginBtn">
-    Login
-   </button>
+   <button class="primary wide" id="loginBtn">Login</button>
   </form>
-
-  <p class="muted">
-   আপনার Password কারও সঙ্গে শেয়ার করবেন না।
-  </p>
+  <p class="muted">আপনার পাসওয়ার্ড কারও সঙ্গে শেয়ার করবেন না।</p>
  </div>
 </section>
 
-<!-- ADMIN DASHBOARD -->
 <div id="app" class="hidden">
-
  <aside class="sidebar" id="sidebar">
-  <div class="brand">
-   ✚ HCMS
-   <small>Health Care Management System</small>
-  </div>
-
+  <div class="brand">✚ HCMS<small>Health Care Management System</small></div>
   <div class="nav-label">MAIN MENU</div>
-
   <nav class="nav">
-   <button class="active" data-view="dashboard">
-    ▦ Dashboard
-   </button>
-
-   <button data-view="hospitals">
-    🏥 Hospital Management
-   </button>
-
-   <button data-view="approvals">
-    ✓ Hospital Approval
-   </button>
-
-   <button data-view="doctors">
-    👨‍⚕️ Doctors
-   </button>
-
-   <button data-view="patients">
-    🧑 Patients
-   </button>
-
-   <button data-view="appointments">
-    📅 Appointments
-   </button>
+   <button data-view="dashboard" class="active">▦ Dashboard</button>
+   <button data-view="hospitals">🏥 Hospital Management</button>
+   <button data-view="approvals">✓ Hospital Approval</button>
+   <button data-view="doctors">👨‍⚕️ Doctors</button>
+   <button data-view="patients">🧑 Patients</button>
+   <button data-view="appointments">📅 Appointments</button>
   </nav>
-
   <div class="nav-label">ADMINISTRATION</div>
-
   <nav class="nav">
-   <button data-view="revenue">
-    ৳ Revenue & Finance
-   </button>
-
-   <button data-view="reports">
-    ▤ Reports
-   </button>
-
-   <button data-view="users">
-    ♙ User Management
-   </button>
+   <button data-view="users">♙ User Management</button>
   </nav>
-
   <div class="nav-label">ACCOUNT</div>
-
-  <nav class="nav">
-   <button id="logoutBtn">
-    ⇥ Logout
-   </button>
-  </nav>
+  <nav class="nav"><button id="logoutBtn">⇥ Logout</button></nav>
  </aside>
 
  <div class="main">
-
   <header class="top">
    <div style="display:flex;align-items:center;gap:12px">
     <button class="menu-btn" id="menuBtn">☰</button>
     <h1 id="heading">Super Admin Dashboard</h1>
    </div>
-
-   <div class="user">
-    <b id="adminName">Super Admin</b><br>
-    <span id="adminEmail" class="muted"></span>
-   </div>
+   <div class="user"><b id="adminName">Super Admin</b><br><span id="adminEmail" class="muted"></span></div>
   </header>
 
   <main class="content">
-
-   <!-- DASHBOARD -->
    <section id="dashboardView">
-
     <div class="welcome">
      <h2>Welcome to HCMS</h2>
-     <div>
-      আপনার Multi-Hospital Management System-এর কেন্দ্রীয় ড্যাশবোর্ড
-     </div>
+     <div>Multi-Hospital Management System - Super Admin Dashboard</div>
     </div>
-
     <div class="cards">
-
-     <div class="card">
-      <span class="symbol">🏥</span>
-      <div class="label">Total Hospitals</div>
-      <strong id="hospitalCount">—</strong>
-     </div>
-
-     <div class="card">
-      <span class="symbol">👨‍⚕️</span>
-      <div class="label">Total Doctors</div>
-      <strong id="doctorCount">—</strong>
-     </div>
-
-     <div class="card">
-      <span class="symbol">🧑‍🤝‍🧑</span>
-      <div class="label">Total Patients</div>
-      <strong id="patientCount">—</strong>
-     </div>
-
-     <div class="card">
-      <span class="symbol">📅</span>
-      <div class="label">Appointments</div>
-      <strong id="appointmentCount">—</strong>
-     </div>
-
+     <div class="card"><span class="symbol">🏥</span><div class="label">Total Hospitals</div><strong id="hospitalCount">—</strong></div>
+     <div class="card"><span class="symbol">👨‍⚕️</span><div class="label">Total Doctors</div><strong id="doctorCount">—</strong></div>
+     <div class="card"><span class="symbol">🧑‍🤝‍🧑</span><div class="label">Total Patients</div><strong id="patientCount">—</strong></div>
+     <div class="card"><span class="symbol">📅</span><div class="label">Appointments</div><strong id="appointmentCount">—</strong></div>
     </div>
-
     <div class="grid">
-
-     <div class="panel">
-      <h3>Hospital Overview</h3>
-      <div class="muted">
-       ডেটাবেস থেকে হাসপাতালের তালিকা
-      </div>
-      <div id="hospitalSummary" class="empty">
-       তথ্য লোড হচ্ছে…
-      </div>
-     </div>
-
-     <div class="panel">
-      <h3>System Status</h3>
-      <p><span class="pill">Authenticated</span></p>
-      <p class="muted">
-       Super Admin role যাচাই করা হয়েছে।
-      </p>
-      <p class="muted">Database: Supabase</p>
-     </div>
-
+     <div class="panel"><h3>Recent Hospitals</h3><div id="hospitalSummary" class="empty">তথ্য লোড হচ্ছে…</div></div>
+     <div class="panel"><h3>System Status</h3><p><span class="status approved">Authenticated</span></p><p class="muted">Database: Supabase</p><p class="muted">Role: Super Admin</p></div>
     </div>
    </section>
 
-   <!-- MODULE LIST -->
    <section id="listView" class="hidden">
     <div class="panel">
-
      <div class="toolbar">
       <h3 id="listTitle">Records</h3>
-      <button class="primary" id="refreshBtn">
-       Refresh
-      </button>
+      <button class="secondary" id="refreshBtn">Refresh</button>
      </div>
-
-     <div class="table-wrap" id="records"></div>
-
+     <div id="records"></div>
     </div>
    </section>
 
+   <section id="hospitalFormView" class="hidden">
+    <div class="panel">
+     <h3 id="hospitalFormTitle">নতুন হাসপাতাল নিবন্ধন</h3>
+     <form id="hospitalForm">
+      <input type="hidden" id="hospitalId">
+      <div class="form-grid">
+       <div class="field"><label>হাসপাতালের নাম *</label><input id="hName" required maxlength="150"></div>
+       <div class="field"><label>Slug *</label><input id="hSlug" required maxlength="150" placeholder="hospital-name"></div>
+       <div class="field"><label>মোবাইল নম্বর</label><input id="hPhone"></div>
+       <div class="field"><label>ইমেইল</label><input id="hEmail" type="email"></div>
+      </div>
+      <div class="field"><label>ঠিকানা</label><input id="hAddress"></div>
+      <div class="field" id="statusField">
+       <label>Hospital Status</label>
+       <select id="hStatus" style="padding:11px;border:1px solid #d9e1ec;border-radius:8px;width:100%">
+        <option value="pending">Pending</option>
+        <option value="approved">Approved</option>
+        <option value="rejected">Rejected</option>
+       </select>
+      </div>
+      <button class="primary" type="submit" id="saveHospitalBtn">Save Hospital</button>
+      <button class="secondary" type="button" id="cancelHospitalBtn">Cancel</button>
+     </form>
+    </div>
+   </section>
   </main>
  </div>
 </div>
-
 <div id="toast"></div>
 
 <script>
+/* SUPABASE PROJECT CONFIGURATION */
+const SUPABASE_URL="https://zagmebjlyswokvwbnplm.supabase.co";
+const SUPABASE_ANON_KEY="sb_publishable_j67EP3xe1m7vMQmtWvSvQg_1wq9IKiZ";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 
-/* SUPABASE CONNECTION */
-
-const SUPABASE_URL =
- "https://zagmebjlyswokvwbnplm.supabase.co";
-
-const SUPABASE_ANON_KEY =
- "sb_publishable_j67EP3xe1m7vMQmtWvSvQg_1wq9IKiZ";
-
-const db = window.supabase.createClient(
- SUPABASE_URL,
- SUPABASE_ANON_KEY
-);
-
-let currentView = "dashboard";
-
-const $ = id => document.getElementById(id);
-
-function showError(message){
- $("error").textContent = message;
-}
+const $=id=>document.getElementById(id);
+let activeSession=null;
+let currentView="dashboard";
+let hospitalCache=[];
 
 function escapeHtml(value){
- return String(value ?? "").replace(/[&<>"']/g,c=>({
-  "&":"&amp;",
-  "<":"&lt;",
-  ">":"&gt;",
-  '"':"&quot;",
-  "'":"&#39;"
+ return String(value??"").replace(/[&<>"']/g,c=>({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
  }[c]));
 }
+function notify(message){
+ $("toast").textContent=message;
+ $("toast").style.display="block";
+ setTimeout(()=>$("toast").style.display="none",3500);
+}
+function showError(message){$("error").textContent=message;}
 
-/* VERIFY SUPER ADMIN */
-
+/* AUTHENTICATION AND ROLE CHECK */
 async function showApp(session){
-
+ activeSession=session;
  $("login").classList.add("hidden");
  $("app").classList.remove("hidden");
+ $("adminEmail").textContent=session.user.email||"";
 
- $("adminEmail").textContent =
-  session.user.email || "";
-
- const {data:profile,error} = await db
-  .from("profiles")
+ const {data:profile,error}=await db.from("profiles")
   .select("full_name,system_role")
-  .eq("id",session.user.id)
-  .single();
+  .eq("id",session.user.id).single();
 
- if(error || !profile ||
-    profile.system_role !== "super_admin"){
-
+ if(error||!profile||profile.system_role!=="super_admin"){
   await db.auth.signOut();
-
+  activeSession=null;
   $("app").classList.add("hidden");
   $("login").classList.remove("hidden");
-
-  showError(
-   "এই অ্যাকাউন্টে Super Admin অনুমতি নেই।"
-  );
-
+  showError("এই অ্যাকাউন্টে Super Admin অনুমতি নেই।");
   return;
  }
-
- $("adminName").textContent =
-  profile.full_name || "Super Admin";
-
+ $("adminName").textContent=profile.full_name||"Super Admin";
  await loadDashboard();
 }
 
-/* DASHBOARD COUNTS */
-
+/* DASHBOARD */
 async function countRows(table,id){
-
- const {count,error} = await db
-  .from(table)
-  .select("*",{count:"exact",head:true});
-
- $(id).textContent =
-  error ? "—" : (count ?? 0);
+ const {count,error}=await db.from(table).select("*",{count:"exact",head:true});
+ $(id).textContent=error?"—":(count??0);
 }
-
 async function loadDashboard(){
-
  await Promise.all([
   countRows("hospitals","hospitalCount"),
   countRows("doctors","doctorCount"),
   countRows("patients","patientCount"),
   countRows("appointments","appointmentCount")
  ]);
-
- const {data,error} = await db
-  .from("hospitals")
-  .select("*")
-  .limit(5);
-
+ const {data,error}=await db.from("hospitals")
+  .select("id,name,address,status,created_at")
+  .order("created_at",{ascending:false}).limit(5);
  if(error){
-  $("hospitalSummary").textContent =
-   "হাসপাতালের তথ্য লোড করা যায়নি: " +
-   error.message;
+  $("hospitalSummary").textContent="তথ্য পাওয়া যায়নি: "+error.message;
   return;
  }
-
- if(!data || !data.length){
-  $("hospitalSummary").textContent =
-   "এখনো কোনো হাসপাতাল নিবন্ধিত হয়নি।";
+ if(!data?.length){
+  $("hospitalSummary").textContent="এখনো কোনো হাসপাতাল নিবন্ধিত হয়নি।";
   return;
  }
-
- $("hospitalSummary").innerHTML =
-  '<table><thead><tr>' +
-  '<th>Hospital</th><th>Details</th>' +
-  '</tr></thead><tbody>' +
-
-  data.map(h =>
-   '<tr><td>' +
-   escapeHtml(h.name || h.hospital_name ||
-   "Unnamed hospital") +
-   '</td><td>' +
-   escapeHtml(h.city || h.address || "—") +
-   '</td></tr>'
-  ).join("") +
-
-  '</tbody></table>';
+ $("hospitalSummary").innerHTML=
+  '<div class="table-wrap"><table><thead><tr><th>Hospital</th><th>Status</th></tr></thead><tbody>'+
+  data.map(h=>`<tr><td>${escapeHtml(h.name)}</td><td><span class="status ${escapeHtml(h.status)}">${escapeHtml(h.status)}</span></td></tr>`).join("")+
+  '</tbody></table></div>';
 }
 
-/* MODULE DATA */
-
+/* VIEW MANAGEMENT */
+function showView(view){
+ currentView=view;
+ $("dashboardView").classList.toggle("hidden",view!=="dashboard");
+ $("listView").classList.toggle("hidden",view==="dashboard");
+ $("hospitalFormView").classList.add("hidden");
+ $("heading").textContent=view==="dashboard"?"Super Admin Dashboard":view==="hospitals"?"Hospital Management":view==="approvals"?"Hospital Approval":view.charAt(0).toUpperCase()+view.slice(1);
+ if(view==="dashboard")loadDashboard();
+ else openList(view);
+}
 async function openList(view){
-
- currentView = view;
-
- $("dashboardView").classList.add("hidden");
- $("listView").classList.remove("hidden");
-
- const map = {
+ const map={
   hospitals:["Hospital Management","hospitals"],
   approvals:["Hospital Approval","hospitals"],
   doctors:["Doctors","doctors"],
   patients:["Patients","patients"],
   appointments:["Appointments","appointments"],
-  revenue:["Revenue & Finance","hospitals"],
-  reports:["Reports","hospitals"],
   users:["User Management","profiles"]
  };
+ const [title,table]=map[view]||map.hospitals;
+ $("heading").textContent=title;
+ $("listTitle").textContent=title;
+ $("records").innerHTML='<div class="empty">তথ্য লোড হচ্ছে…</div>';
 
- const [title,table] = map[view];
-
- $("heading").textContent = title;
- $("listTitle").textContent = title;
-
- $("records").innerHTML =
-  '<div class="empty">তথ্য লোড হচ্ছে…</div>';
-
- const {data,error} = await db
-  .from(table)
-  .select("*")
-  .limit(100);
+ let query=db.from(table).select("*");
+ if(view==="approvals")query=query.eq("status","pending");
+ const {data,error}=await query.order("created_at",{ascending:false}).limit(100);
 
  if(error){
-  $("records").innerHTML =
-   '<div class="empty">তথ্য পাওয়া যায়নি: ' +
-   escapeHtml(error.message) +
-   '</div>';
+  $("records").innerHTML='<div class="empty">সমস্যা: '+escapeHtml(error.message)+'</div>';
   return;
  }
-
- if(!data || !data.length){
-  $("records").innerHTML =
-   '<div class="empty">কোনো রেকর্ড পাওয়া যায়নি।</div>';
+ if(!data?.length){
+  $("records").innerHTML='<div class="empty">কোনো রেকর্ড পাওয়া যায়নি।</div>';
+  if(view==="hospitals")$("records").innerHTML+='<div style="text-align:center"><button class="primary" onclick="newHospital()">+ নতুন হাসপাতাল</button></div>';
   return;
  }
+ if(view==="hospitals"||view==="approvals"){
+  hospitalCache=data;
+  renderHospitals(data,view);
+  return;
+ }
+ const keys=Object.keys(data[0]).slice(0,7);
+ $("records").innerHTML='<div class="table-wrap"><table><thead><tr>'+keys.map(k=>'<th>'+escapeHtml(k)+'</th>').join("")+'</tr></thead><tbody>'+
+ data.map(row=>'<tr>'+keys.map(k=>'<td>'+escapeHtml(row[k])+'</td>').join("")+'</tr>').join("")+
+ '</tbody></table></div>';
+}
 
- const keys = Object.keys(data[0]).slice(0,6);
+function renderHospitals(data,view){
+ $("records").innerHTML=`
+  <div class="toolbar">
+   ${view==="hospitals"?'<button class="primary" onclick="newHospital()">+ নতুন হাসপাতাল নিবন্ধন</button>':''}
+   <span class="muted">মোট রেকর্ড: ${data.length}</span>
+  </div>
+  <div class="table-wrap"><table>
+   <thead><tr><th>নাম</th><th>ফোন</th><th>ইমেইল</th><th>ঠিকানা</th><th>Status</th><th>Action</th></tr></thead>
+   <tbody>
+   ${data.map((h,i)=>`
+    <tr>
+     <td>${escapeHtml(h.name)}</td>
+     <td>${escapeHtml(h.phone)}</td>
+     <td>${escapeHtml(h.email)}</td>
+     <td>${escapeHtml(h.address)}</td>
+     <td><span class="status ${escapeHtml(h.status)}">${escapeHtml(h.status)}</span></td>
+     <td>
+      <button class="secondary" onclick="editHospital(${i})">Edit</button>
+      ${h.status!=="approved"?`<button class="success" onclick="changeHospitalStatus(${i},'approved')">Approve</button>`:""}
+      ${h.status!=="rejected"?`<button class="danger" onclick="changeHospitalStatus(${i},'rejected')">Reject</button>`:""}
+      <button class="danger" onclick="deleteHospital(${i})">Delete</button>
+     </td>
+    </tr>`).join("")}
+   </tbody>
+  </table></div>`;
+}
 
- $("records").innerHTML =
-  '<table><thead><tr>' +
+/* HOSPITAL FORM */
+function newHospital(){
+ $("dashboardView").classList.add("hidden");
+ $("listView").classList.add("hidden");
+ $("hospitalFormView").classList.remove("hidden");
+ $("hospitalForm").reset();
+ $("hospitalId").value="";
+ $("hStatus").value="pending";
+ $("hospitalFormTitle").textContent="নতুন হাসপাতাল নিবন্ধন";
+ $("heading").textContent="Hospital Registration";
+}
+function editHospital(index){
+ const h=hospitalCache[index];
+ if(!h)return;
+ newHospital();
+ $("hospitalId").value=h.id;
+ $("hName").value=h.name||"";
+ $("hSlug").value=h.slug||"";
+ $("hPhone").value=h.phone||"";
+ $("hEmail").value=h.email||"";
+ $("hAddress").value=h.address||"";
+ $("hStatus").value=h.status||"pending";
+ $("hospitalFormTitle").textContent="হাসপাতালের তথ্য সম্পাদনা";
+ $("heading").textContent="Edit Hospital";
+}
+$("hName").addEventListener("input",()=>{
+ if(!$("hospitalId").value){
+  $("hSlug").value=$("hName").value.trim().toLowerCase()
+   .replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+ }
+});
+$("cancelHospitalBtn").addEventListener("click",()=>showView("hospitals"));
 
-  keys.map(k =>
-   '<th>' + escapeHtml(k) + '</th>'
-  ).join("") +
+$("hospitalForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+ if(!activeSession){alert("আবার লগইন করুন।");return;}
+ const id=$("hospitalId").value;
+ const hospital={
+  name:$("hName").value.trim(),
+  slug:$("hSlug").value.trim().toLowerCase(),
+  phone:$("hPhone").value.trim()||null,
+  email:$("hEmail").value.trim()||null,
+  address:$("hAddress").value.trim()||null,
+  status:$("hStatus").value
+ };
+ if(!hospital.name||!hospital.slug){alert("নাম ও Slug লিখুন।");return;}
+ $("saveHospitalBtn").disabled=true;
+ let result;
+ if(id){
+  result=await db.from("hospitals").update(hospital).eq("id",id);
+ }else{
+  hospital.created_by=activeSession.user.id;
+  result=await db.from("hospitals").insert(hospital);
+ }
+ $("saveHospitalBtn").disabled=false;
+ if(result.error){
+  alert("সংরক্ষণ করা যায়নি: "+result.error.message);
+  return;
+ }
+ notify(id?"হাসপাতালের তথ্য আপডেট হয়েছে।":"হাসপাতাল নিবন্ধন সম্পন্ন হয়েছে।");
+ showView("hospitals");
+});
 
-  '</tr></thead><tbody>' +
-
-  data.map(row =>
-   '<tr>' +
-   keys.map(k =>
-    '<td>' + escapeHtml(row[k]) + '</td>'
-   ).join("") +
-   '</tr>'
-  ).join("") +
-
-  '</tbody></table>';
+/* APPROVE / REJECT / DELETE */
+async function changeHospitalStatus(index,status){
+ const h=hospitalCache[index];
+ if(!h)return;
+ if(!confirm("এই হাসপাতালের Status "+status+" করতে চান?"))return;
+ const {error}=await db.from("hospitals").update({status}).eq("id",h.id);
+ if(error){alert("সমস্যা: "+error.message);return;}
+ notify("Hospital status updated.");
+ await loadDashboard();
+ await openList(currentView);
+}
+async function deleteHospital(index){
+ const h=hospitalCache[index];
+ if(!h)return;
+ if(!confirm("এই হাসপাতালটি মুছে ফেলতে চান? এটি স্থায়ীভাবে মুছে যেতে পারে।"))return;
+ const {error}=await db.from("hospitals").delete().eq("id",h.id);
+ if(error){alert("মুছে ফেলা যায়নি: "+error.message);return;}
+ notify("Hospital deleted.");
+ await loadDashboard();
+ await openList(currentView);
 }
 
 /* LOGIN */
-
-$("loginForm").addEventListener(
- "submit",
- async e=>{
-
-  e.preventDefault();
-
-  showError("");
-
-  $("loginBtn").disabled = true;
-  $("loginBtn").textContent = "Signing in…";
-
-  const {data,error} = await db.auth.signInWithPassword({
-   email:$("email").value.trim(),
-   password:$("password").value
-  });
-
-  $("loginBtn").disabled = false;
-  $("loginBtn").textContent = "Login";
-
-  if(error){
-   showError("Login হয়নি: " + error.message);
-   return;
-  }
-
-  await showApp(data.session);
- }
-);
-
-/* LOGOUT */
-
-$("logoutBtn").addEventListener(
- "click",
- async()=>{
-  await db.auth.signOut();
-  location.reload();
- }
-);
-
-/* MOBILE MENU */
-
-$("menuBtn").addEventListener(
- "click",
- ()=>{
-  $("sidebar").classList.toggle("open");
- }
-);
-
-/* NAVIGATION */
-
-document.querySelectorAll("[data-view]")
-.forEach(button=>{
-
- button.addEventListener("click",async()=>{
-
-  document.querySelectorAll("[data-view]")
-  .forEach(b=>{
-   b.classList.toggle("active",b===button);
-  });
-
-  $("sidebar").classList.remove("open");
-
-  if(button.dataset.view==="dashboard"){
-
-   currentView = "dashboard";
-
-   $("dashboardView").classList.remove("hidden");
-   $("listView").classList.add("hidden");
-
-   $("heading").textContent =
-    "Super Admin Dashboard";
-
-   await loadDashboard();
-
-  }else{
-
-   await openList(button.dataset.view);
-
-  }
+$("loginForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+ showError("");
+ $("loginBtn").disabled=true;
+ $("loginBtn").textContent="Signing in...";
+ const {data,error}=await db.auth.signInWithPassword({
+  email:$("email").value.trim(),
+  password:$("password").value
  });
+ $("loginBtn").disabled=false;
+ $("loginBtn").textContent="Login";
+ if(error){showError("Login হয়নি: "+error.message);return;}
+ await showApp(data.session);
 });
 
-/* REFRESH */
+/* LOGOUT */
+$("logoutBtn").addEventListener("click",async()=>{
+ await db.auth.signOut();
+ activeSession=null;
+ location.reload();
+});
 
-$("refreshBtn").addEventListener(
- "click",
- ()=>{
-  if(currentView==="dashboard"){
-   loadDashboard();
-  }else{
-   openList(currentView);
-  }
- }
-);
+/* NAVIGATION */
+document.querySelectorAll("[data-view]").forEach(button=>{
+ button.addEventListener("click",()=>{
+  document.querySelectorAll("[data-view]").forEach(b=>b.classList.toggle("active",b===button));
+  $("sidebar").classList.remove("open");
+  showView(button.dataset.view);
+ });
+});
+$("menuBtn").addEventListener("click",()=>$("sidebar").classList.toggle("open"));
+$("refreshBtn").addEventListener("click",()=>showView(currentView));
 
-/* AUTO LOGIN CHECK */
-
+/* SESSION RESTORE */
 (async()=>{
-
- const {data} = await db.auth.getSession();
-
- if(data.session){
-  await showApp(data.session);
- }
-
+ const {data}=await db.auth.getSession();
+ if(data.session)await showApp(data.session);
 })();
-
 </script>
-
 </body>
 </html>
